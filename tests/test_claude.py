@@ -70,7 +70,7 @@ def test_no_key_means_unavailable(monkeypatch):
 
 def test_conversation_in_claude_format():
     conversation = [
-        {"role": "system", "content": "You are Harry."},
+        {"role": "system", "content": "You are Harry AI."},
         {"role": "user", "content": "Biggest upset?"},
         {"role": "assistant", "content": "", "tool_calls": [
             {"id": "call_0", "type": "function", "function": {"name": "upsets", "arguments": '{"game_type": "V85"}'}},
@@ -80,7 +80,7 @@ def test_conversation_in_claude_format():
         {"role": "assistant", "content": "Wiener Sängerknabe."},
     ]
     system, messages = claude.to_claude(conversation)
-    assert system == "You are Harry."
+    assert system == "You are Harry AI."
     assert [m["role"] for m in messages] == ["user", "assistant", "user", "assistant"]
     assert messages[1]["content"][0] == {"type": "tool_use", "id": "call_0", "name": "upsets", "input": {"game_type": "V85"}}
     assert messages[1]["content"][1]["input"] == {}
@@ -109,7 +109,7 @@ async def test_stream_gives_text_and_whole_tool_calls(foundry, monkeypatch):
 
 
 @pytest.mark.anyio
-async def test_harry_runs_on_claude_in_claude_mode(monkeypatch):
+async def test_harry_ai_runs_on_claude_in_claude_mode(monkeypatch):
     seen = []
 
     async def fake_model():
@@ -126,8 +126,43 @@ async def test_harry_runs_on_claude_in_claude_mode(monkeypatch):
     monkeypatch.setattr(claude, "stream", fake_stream)
     monkeypatch.setattr(agent.tools, "load", no_games)
     events_out = [e async for e in agent.chat([{"role": "user", "content": "Hej"}], "V85", "sv", "claude")]
-    assert [e["type"] for e in events_out][:2] == ["token", "done"]
+    assert [e["type"] for e in events_out][:3] == ["status", "token", "done"]
+    assert events_out[0] == {"type": "status", "state": "thinking", "text": "Tänker"}
     assert "You run on Claude Sonnet 5.5 by Anthropic" in seen[0]
+
+
+@pytest.mark.anyio
+async def test_status_in_claude_mode_with_a_tool_call(monkeypatch, load):
+    """Claude streams its text live and sends each tool call whole at the end of a round."""
+    rounds = []
+
+    async def fake_model():
+        return "claude-sonnet-4-6"
+
+    async def fake_stream(conversation, tool_schemas):
+        rounds.append(list(conversation))  # as it was sent in this round
+        if len(rounds) == 1:
+            yield "tool", {"index": 0, "id": "toolu_1",
+                           "function": {"name": "upsets", "arguments": json.dumps({"game_type": "V85"})}}
+        else:
+            yield "text", "Den största skrällen var i avdelning 4."
+
+    async def boden(client, game_type):
+        return [load("V85_2026-10-03_11_5", True)]
+
+    async def no_follow_up_model(*args, **kwargs):
+        raise claude.Unavailable("not in tests")  # the follow-ups fall back to preset ideas
+
+    monkeypatch.setattr(claude, "model", fake_model)
+    monkeypatch.setattr(claude, "stream", fake_stream)
+    monkeypatch.setattr(claude, "ask", no_follow_up_model)
+    monkeypatch.setattr(agent.tools, "load", boden)
+    events_out = [e async for e in agent.chat([{"role": "user", "content": "Största skrällen?"}], "V85", "sv", "claude")]
+    assert [(e["type"], e.get("state"), e.get("text")) for e in events_out][:5] == [
+        ("status", "thinking", "Tänker"), ("status", "looking", "Tittar på skrällarna i V85"), ("tool", None, None),
+        ("status", "thinking", "Tänker"), ("token", None, "Den största skrällen var i avdelning 4.")]
+    assert [e["type"] for e in events_out][-2:] == ["done", "followups"]
+    assert [m["role"] for m in rounds[1]] == ["system", "user", "assistant", "tool"]  # no status in the history
 
 
 def test_azure_names_and_any_endpoint_form(monkeypatch):

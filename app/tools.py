@@ -55,7 +55,7 @@ async def run(client: httpx.AsyncClient, name: str, args: dict, page_game_type: 
         facts, view = compare_game_types(dict(zip(fetch.GAME_TYPES, loaded)), lang)
         return facts, view, say(lang, "Compared every game type")
 
-    game_type = args.get("game_type") if args.get("game_type") in fetch.GAME_TYPES else page_game_type
+    game_type = game_type_for(args, page_game_type)
     games = await load(client, game_type)
     if not games:
         facts = [f"There are no finished {game_type} games right now."]
@@ -78,6 +78,37 @@ async def run(client: httpx.AsyncClient, name: str, args: dict, page_game_type: 
         horse = str(args.get("name") or "")
         return *find_horse(games, game_type, horse, lang), say(lang, "Searched for {horse}", horse=horse)
     return [f"There is no tool called {name}."], None, say(lang, "Tried an unknown tool")
+
+
+def looking(name: str, args: dict, page_game_type: str, games: list[Game], lang: str = "en") -> str:
+    """What a tool call is about to look at, for the page while it runs: "Looking at leg 1 at Boden".
+    It reads the arguments the way run() does. games are the page's games, already loaded (the tool
+    loads the same ones), so the track is named the way the tool will find it. Other game types keep
+    the track as the model wrote it. Anything unexpected (an unknown tool, a leg that is not a number,
+    no horse name) gets a general text."""
+    game_type = game_type_for(args, page_game_type)
+    game = pick_game(games, str(args.get("track") or "")) if games and game_type == page_game_type else None
+    track = game.track if game else shown(args.get("track"))  # "boden" -> "Boden", no track -> the latest game's
+    leg, horse = args.get("leg"), shown(args.get("name"))
+    if name == "compare_game_types":
+        return say(lang, "Comparing all game types")
+    if name == "favourite_stats":
+        return say(lang, "Looking at the {game_type} favourites", game_type=game_type)
+    if name == "upsets":
+        return say(lang, "Looking at the {game_type} upsets", game_type=game_type)
+    if name == "bets_vs_odds":
+        return say(lang, "Looking at bets against the odds in {game_type}", game_type=game_type)
+    if name == "game_overview" and track:
+        return say(lang, "Looking at the latest {game_type} game at {track}", game_type=game_type, track=track)
+    if name == "game_overview":
+        return say(lang, "Looking at the latest {game_type} game", game_type=game_type)
+    if name == "leg_details" and type(leg) is int and 0 < leg < 100:  # not True, "7" or 7.5
+        if track:
+            return say(lang, "Looking at leg {leg} at {track}", leg=leg, track=track)
+        return say(lang, "Looking at leg {leg} in {game_type}", leg=leg, game_type=game_type)
+    if name == "find_horse" and len(plain(horse)) >= 3:  # the same minimum as find_horse
+        return say(lang, "Looking for the horse {horse}", horse=horse)
+    return say(lang, "Looking at the race data")
 
 
 # ---------- the tools ----------
@@ -312,6 +343,17 @@ def pick_game(games: list[Game], track: str) -> Game | None:
     if not plain(track):
         return games[0]
     return next((game for game in games if plain(track) in plain(game.track)), None)
+
+
+def game_type_for(args: dict, page_game_type: str) -> str:
+    """The game type a tool call asks for, or the page's when it names none (or one that does not exist)."""
+    return args.get("game_type") if args.get("game_type") in fetch.GAME_TYPES else page_game_type
+
+
+def shown(value) -> str:
+    """A name the model wrote, fit for a status line: text on one line, at most 40 characters. Else ""."""
+    text = " ".join(value.split()) if isinstance(value, str) else ""
+    return text if len(text) <= 40 else ""
 
 
 def no_track(games: list[Game], game_type: str, track: str) -> list[str]:

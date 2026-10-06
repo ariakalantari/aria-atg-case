@@ -2,7 +2,7 @@
 // in plain English:  t("Favourite won {w} of {n}", { w: 2, n: 8 })  ->  "Favoriten vann 2 av 8"
 // Static text is marked with data-i18n in index.html. The choice is remembered in this browser.
 // The Swedish follows ATG's own words where they have one (avdelning, omgång, spelform, spelprocent,
-// skräll, strukna, "Sammanfatta ...", "Skriv till ... här", "Tolkar fråga"), checked against atg.se.
+// skräll, strukna, "Sammanfatta ...", "Skriv till ... här"), checked against atg.se.
 
 const SWEDISH = {
   // top bar and intro
@@ -20,7 +20,7 @@ const SWEDISH = {
 
   // progress and errors
   "Fetching the latest games from ATG": "Hämtar de senaste omgångarna från ATG",
-  "Harry is answering leg {n} of {total}": "Harry svarar på avdelning {n} av {total}",
+  "Harry AI is answering leg {n} of {total}": "Harry AI svarar på avdelning {n} av {total}",
   "Counting": "Räknar",
   "Lost contact with the app. Check that it is still running.": "Tappade kontakten med appen. Kontrollera att den fortfarande körs.",
   "ATG has no finished {type} games right now.": "ATG har inga avgjorda {type}-omgångar just nu.",
@@ -29,8 +29,8 @@ const SWEDISH = {
   "Could not get data from ATG right now. Please try again in a moment.": "Kunde inte hämta data från ATG just nu. Försök igen om en liten stund.",
   "Something went wrong. Please try again.": "Något gick fel. Försök igen.",
 
-  // Harry's answers to the four questions
-  "Harry's answers to the four questions": "Harrys svar på de fyra frågorna",
+  // Harry AI's answers to the four questions
+  "Harry AI's answers to the four questions": "Harry AI:s svar på de fyra frågorna",
   "The three favourites in each leg, with name and V-odds": "De tre favoriterna i varje avdelning, med namn och V-odds",
   "Whether the favourite won": "Om favoriten vann",
   "The favourite's median finishing position": "Favoritens medianplacering",
@@ -38,8 +38,8 @@ const SWEDISH = {
   "All {n} legs": "Alla {n} avdelningar",
   "See every leg below": "Se alla avdelningar nedan",
   "Won {w} of {n}": "Vann {w} av {n}",
-  "Harry also answered the median and win rate": "Harry svarade också på medianen och vinstandelen",
-  "Median and win rate counted by code from Harry's answers": "Median och vinstandel räknade av koden utifrån Harrys svar",
+  "Harry AI also answered the median and win rate": "Harry AI svarade också på medianen och vinstandelen",
+  "Median and win rate counted by code from Harry AI's answers": "Median och vinstandel räknade av koden utifrån Harry AI:s svar",
   "The answer: the customers' favourite won {w} of {n} legs ({pct}). The odds gave it {odds}, so it won more often than the odds expected.":
     "Svaret: kundernas favorit vann {w} av {n} avdelningar ({pct}). Oddsen gav den {odds}, så den vann oftare än oddsen väntade.",
   "The answer: the customers' favourite won {w} of {n} legs ({pct}). The odds gave it {odds}, so it won less often than the odds expected.":
@@ -64,7 +64,7 @@ const SWEDISH = {
     "En flagga per avdelning, placerad där favoriten kom i mål. Siffran på flaggan är avdelningen.",
   "Median {x}": "Median {x}",
   "{track}, leg {leg}: {horse}": "{track}, avd {leg}: {horse}",
-  " (Harry was wrong here)": " (Harry hade fel här)",
+  " (Harry AI was wrong here)": " (Harry AI hade fel här)",
   "DQ": "Disk",
   "4th+": "4:e+",
 
@@ -72,7 +72,7 @@ const SWEDISH = {
   "{date} • {n} legs": "{date} • {n} avdelningar",
   "Favourite won {w} of {n}": "Favoriten vann {w} av {n}",
   "Leg": "Avd",
-  "The three favourites, as Harry named them": "De tre favoriterna, enligt Harry",
+  "The three favourites, as Harry AI named them": "De tre favoriterna, enligt Harry AI",
   "Favourite": "Favorit",
   "Check": "Kontroll",
   "Won": "Vann",
@@ -80,24 +80,24 @@ const SWEDISH = {
   "Outside top 3": "Utanför topp 3",
   "All answers match the code": "Alla svar stämmer med koden",
   "Some answers differ from the code": "Några svar skiljer sig från koden",
-  "What Harry saw": "Det här såg Harry",
-  "Ask Harry about this leg": "Fråga Harry om avdelningen",
+  "What Harry AI saw": "Det här såg Harry AI",
+  "Ask Harry AI about this leg": "Fråga Harry AI om avdelningen",
   "Tell me about leg {leg} at {track}.": "Berätta om avdelning {leg} på {track}.",
   "Before the race": "Före loppet",
-  "Harry only saw the odds": "Harry såg bara oddsen",
+  "Harry AI only saw the odds": "Harry AI såg bara oddsen",
   "After the race": "Efter loppet",
-  "Harry only saw the result": "Harry såg bara resultatet",
+  "Harry AI only saw the result": "Harry AI såg bara resultatet",
   "Who are the three favourites?": "Vilka är de tre favoriterna?",
   "Where did {horse} finish, and did it win?": "Var kom {horse} i mål, och vann den?",
   "Horse": "Häst",
   "Place": "Plac.",
-  "Harry answered": "Harry svarade",
+  "Harry AI answered": "Harry AI svarade",
   "Show the exact prompt": "Visa exakt prompt",
   "won": "vann",
   "did not win": "vann inte",
-  "Harry got the favourite wrong: it is {right}, not {wrong}.": "Harry fick fel favorit: det är {right}, inte {wrong}.",
-  "Harry had the favourite right, but the three favourites are {names}.": "Harry hade rätt favorit, men de tre favoriterna är {names}.",
-  "Harry got the result wrong.": "Harry fick resultatet fel.",
+  "Harry AI got the favourite wrong: it is {right}, not {wrong}.": "Harry AI fick fel favorit: det är {right}, inte {wrong}.",
+  "Harry AI had the favourite right, but the three favourites are {names}.": "Harry AI hade rätt favorit, men de tre favoriterna är {names}.",
+  "Harry AI got the result wrong.": "Harry AI fick resultatet fel.",
   "Fav {n}": "Fav {n}",
   "{horse} won.": "{horse} vann.",
   "{horse} finished {place}, so the favourite did not win.": "{horse} kom {place}, så favoriten vann inte.",
@@ -109,24 +109,24 @@ const SWEDISH = {
 
   // how it works
   "How it works": "Så fungerar det",
-  "Five steps, and Harry only ever answers small questions.": "Fem steg, och Harry svarar bara på små frågor.",
+  "Five steps, and Harry AI only ever answers small questions.": "Fem steg, och Harry AI svarar bara på små frågor.",
   "Fetch": "Hämta",
   "The three most recent finished games from ATG's racing API.": "De tre senaste avgjorda omgångarna från ATG:s API.",
   "Clean": "Rensa",
   "Drop scratched horses, flag disqualified ones and sort each leg by V-odds.":
     "Ta bort strukna hästar, markera diskvalificerade och sortera varje avdelning efter V-odds.",
   "Ask": "Fråga",
-  "Harry first sees only the odds and names the favourites. Then it sees only the result and says where the favourite finished.":
-    "Harry ser först bara oddsen och namnger favoriterna. Sedan ser Harry bara resultatet och säger var favoriten kom i mål.",
+  "Harry AI first sees only the odds and names the favourites. Then it sees only the result and says where the favourite finished.":
+    "Harry AI ser först bara oddsen och namnger favoriterna. Sedan ser Harry AI bara resultatet och säger var favoriten kom i mål.",
   "Verify": "Kontrollera",
   "Code works out the same answers from the raw data and marks each one.": "Koden räknar fram samma svar ur rådatan och rättar vart och ett.",
   "Count": "Räkna",
-  "Code counts the win rate and median from Harry's own answers.": "Koden räknar ut vinstandel och median utifrån Harrys egna svar.",
+  "Code counts the win rate and median from Harry AI's own answers.": "Koden räknar ut vinstandel och median utifrån Harry AI:s egna svar.",
 
   // Harry AI
   "New chat": "Ny chatt",
   "Close Harry AI": "Stäng Harry AI",
-  "Write to Harry here": "Skriv till Harry här",
+  "Write to Harry AI here": "Skriv till Harry AI här",
   "Your question": "Din fråga",
   "Send": "Skicka",
   "Stop": "Stoppa",
@@ -139,8 +139,7 @@ const SWEDISH = {
   "Compare all game types": "Jämför alla spelformer",
   "Did favourites beat the odds?": "Vann favoriterna oftare än oddsen trodde?",
   "What does V-odds mean?": "Vad betyder V-odds?",
-  "Reading your question": "Tolkar fråga", // ATG's own assistant says exactly this
-  "Reading the results": "Läser resultaten",
+  "Thinking": "Tänker", // the status line while the model works (the server sends the same word)
   "Stopped": "Stoppad",
 
   // Claude mode / Local mode
@@ -155,9 +154,9 @@ const SWEDISH = {
     "Claude är inte tillgänglig just nu. Byt till lokalt läge, eller kontrollera nyckeln i .env.",
 
   // first start (the model download)
-  "Getting Harry ready": "Harry gör sig redo",
-  "Harry is a small AI model that runs on this computer. The first start downloads it once (about 1.3 GB) and saves it, so after that it starts in seconds.":
-    "Harry är en liten AI-modell som körs på den här datorn. Första gången laddas den ner (cirka 1,3 GB) och sparas, så sedan startar den på några sekunder.",
+  "Getting Harry AI ready": "Harry AI gör sig redo",
+  "Harry AI is a small AI model that runs on this computer. The first start downloads it once (about 1.3 GB) and saves it, so after that it starts in seconds.":
+    "Harry AI är en liten AI-modell som körs på den här datorn. Första gången laddas den ner (cirka 1,3 GB) och sparas, så sedan startar den på några sekunder.",
   "Download the model": "Ladda ner modellen",
   "Load it into memory": "Läs in den i minnet",
   "Takes a few seconds": "Tar några sekunder",

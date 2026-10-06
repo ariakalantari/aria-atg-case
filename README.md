@@ -53,7 +53,7 @@ The same 153 legs, answered fresh by both models on 6 October 2026 (the local mo
 | Qwen 3.5 2B, local (default) | 147 (96%) | counted by code from its answers | 4.6 s |
 | Claude Sonnet 4.6, Claude mode | 153 (100%) | by the model, 10 of 10 right | 3.2 s |
 
-Claude mode (the switch next to the flags) only runs on Aria's computer, so the API key is never shared.
+Claude mode (the switch on the left of the top bar) only runs on Aria's computer, so the API key is never shared.
 With your own Foundry key, copy `.env.example` to `.env`. Measure it yourself with
 `docker compose exec app python -m app.evaluate` (add `--claude` for Claude mode).
 

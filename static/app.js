@@ -22,7 +22,7 @@ function init() {
     const button = event.target.closest(".game-type");
     if (button) load(button.dataset.game);
   });
-  // "Ask Harry about this leg" opens the chat with that leg (chat.js)
+  // "Ask Harry AI about this leg" opens the chat with that leg (chat.js)
   $("#games").addEventListener("click", (event) => {
     const button = event.target.closest(".ask-harry");
     if (button) askAboutLeg(Number(button.dataset.leg), button.dataset.track);
@@ -46,7 +46,7 @@ function init() {
 }
 
 // ---------- first start ----------
-// The first start downloads Harry's model (about 1.3 GB). Until it is ready the setup screen shows
+// The first start downloads Harry AI's model (about 1.3 GB). Until it is ready the setup screen shows
 // alone, with real progress, and the report waits instead of failing. Later starts skip all this.
 
 const download = { at: 0, done: 0, speed: 0, moved: 0 }; // last sample, for the speed and time left
@@ -139,7 +139,7 @@ function savedMode() {
   }
 }
 
-// Everything switches: the report (answered again, or from saved answers) and Harry (a new chat)
+// Everything switches: the report (answered again, or from saved answers) and Harry AI (a new chat)
 function setMode(next) {
   mode = next;
   try {
@@ -256,12 +256,12 @@ function showGames(event) {
         <span class="score"></span>
       </header>
       <div class="leg-header" aria-hidden="true">
-        <span>${t("Leg")}</span><span>${t("The three favourites, as Harry named them")}</span>
+        <span>${t("Leg")}</span><span>${t("The three favourites, as Harry AI named them")}</span>
         <span>${t("Favourite")}</span><span>${t("Check")}</span>
       </div>
       <div class="legs"></div>
     </article>`).join("");
-  setProgress(t("Harry is answering leg {n} of {total}", { n: 1, total: state.legsTotal }));
+  setProgress(t("Harry AI is answering leg {n} of {total}", { n: 1, total: state.legsTotal }));
 }
 
 function showLeg(event) {
@@ -274,13 +274,13 @@ function showLeg(event) {
   const game = document.getElementById(`game-${event.game}`);
   game.querySelector(".legs").insertAdjacentHTML("beforeend", legHtml(event));
   const legsShown = state.legs.filter((leg) => leg.game === event.game);
-  const wins = legsShown.filter((leg) => leg.truth.won).length; // the real count, Harry's answers are in the rows
+  const wins = legsShown.filter((leg) => leg.truth.won).length; // the real count, Harry AI's answers are in the rows
   game.querySelector(".score").textContent = t("Favourite won {w} of {n}", { w: wins, n: legsShown.length });
 
   drawFinishes(undefined, true);
   showLegAnswers();
   const done = state.legs.length;
-  setProgress(done < state.legsTotal ? t("Harry is answering leg {n} of {total}", { n: done + 1, total: state.legsTotal }) : t("Counting"));
+  setProgress(done < state.legsTotal ? t("Harry AI is answering leg {n} of {total}", { n: done + 1, total: state.legsTotal }) : t("Counting"));
 }
 
 function showSummary(event) {
@@ -295,8 +295,8 @@ function showSummary(event) {
   const fresh = state.legs.some((leg) => !leg.cached);
   const time = fresh ? t("{s} s on this computer", { s: event.seconds }) : t("Saved answers from an earlier run");
   // Claude sums up its own answers; for the small local model, code counts them (it cannot count 24 lines)
-  const summed = event.summed_up_by === "model" ? t("Harry also answered the median and win rate")
-    : t("Median and win rate counted by code from Harry's answers");
+  const summed = event.summed_up_by === "model" ? t("Harry AI also answered the median and win rate")
+    : t("Median and win rate counted by code from Harry AI's answers");
   $("#answers-score").textContent = `${t("{right} of {checked} answers right, checked by code", { right: state.right, checked: state.checked })} • ${summed} • ${time}`;
   // The answer to the case's question in one sentence, from the code's count
   const than = truth.win_rate > event.odds_win_rate ? "more" : truth.win_rate < event.odds_win_rate ? "less" : "same";
@@ -324,7 +324,7 @@ function legHtml(event) {
   const byName = Object.fromEntries(event.runners.map((r) => [r.name, r]));
   const allRight = Object.values(event.checks).every(Boolean);
 
-  // Name and V-odds as Harry answered them; start number and bet share from the data
+  // Name and V-odds as Harry AI answered them; start number and bet share from the data
   const picks = event.llm.favourites.map((name, i) => {
     const r = byName[name];
     const share = r.bet_share === null ? "" : ` • ${state.type} ${Math.round(r.bet_share)}<small>%</small>`;
@@ -355,9 +355,9 @@ function legHtml(event) {
       </summary>
       <div class="leg-detail">
         <div class="detail-head">
-          <h4>${t("What Harry saw")}</h4>
+          <h4>${t("What Harry AI saw")}</h4>
           <button class="ask-harry" type="button" data-leg="${event.leg}" data-track="${esc(state.games[event.game].track)}">
-            <span class="orb" aria-hidden="true"></span>${t("Ask Harry about this leg")}
+            <span class="orb" aria-hidden="true"></span>${t("Ask Harry AI about this leg")}
           </button>
         </div>
         ${correction}
@@ -368,7 +368,7 @@ function legHtml(event) {
     </details>`;
 }
 
-// What Harry got wrong in a leg, and the right answer, in plain words
+// What Harry AI got wrong in a leg, and the right answer, in plain words
 function correctionText(event) {
   const { llm, truth, checks, runners } = event;
   const horse = (name) => `<strong>${esc(name)}</strong> (${odds(runners.find((r) => r.name === name).odds)})`;
@@ -378,21 +378,21 @@ function correctionText(event) {
     : truth.position === "unplaced" ? t("{horse} finished outside the top 3, so the favourite did not win.", { horse: favourite })
     : t("{horse} finished {place}, so the favourite did not win.", { horse: favourite, place: ordinal(Number(truth.position)) });
   if (llm.favourites[0] !== truth.favourites[0]) {
-    return `${t("Harry got the favourite wrong: it is {right}, not {wrong}.", { right: horse(truth.favourites[0]), wrong: horse(llm.favourites[0]) })} ${outcome}`;
+    return `${t("Harry AI got the favourite wrong: it is {right}, not {wrong}.", { right: horse(truth.favourites[0]), wrong: horse(llm.favourites[0]) })} ${outcome}`;
   }
   if (!checks.favourites) { // the favourite is right, the other two or the V-odds are not
-    const three = t("Harry had the favourite right, but the three favourites are {names}.", { names: truth.favourites.map(horse).join(", ") });
+    const three = t("Harry AI had the favourite right, but the three favourites are {names}.", { names: truth.favourites.map(horse).join(", ") });
     return checks.position && checks.won ? three : `${three} ${outcome}`;
   }
-  return `${t("Harry got the result wrong.")} ${outcome}`;
+  return `${t("Harry AI got the result wrong.")} ${outcome}`;
 }
 
-// What Harry saw, as two cards: before the race (only the odds) and after the race (only the result).
+// What Harry AI saw, as two cards: before the race (only the odds) and after the race (only the result).
 // The boards hold the same data as the prompts, drawn as tables. The exact prompt is one click away.
 function stepsHtml(event) {
   const picked = new Set(event.llm.favourites);
   const favourite = event.llm.favourites[0];
-  // Harry's three favourites get a tag in both tables, so you can follow them from the odds to the result
+  // Harry AI's three favourites get a tag in both tables, so you can follow them from the odds to the result
   const tag = (name) => {
     const n = event.llm.favourites.indexOf(name);
     return n < 0 ? "" : ` <span class="fav-tag ${n === 0 ? "first" : ""}">${t("Fav {n}", { n: n + 1 })}</span>`;
@@ -407,15 +407,15 @@ function stepsHtml(event) {
       <div class="step-head"><span class="step-letter">${letter}</span><div><strong>${title}</strong><small>${note}</small></div></div>
       <p class="task">${task}</p>
       <div class="board-scroll"><table class="board"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>
-      <p class="harry-said"><span class="orb" aria-hidden="true"></span><span>${t("Harry answered")} <strong>${answer}</strong></span>${mark(ok)}</p>
+      <p class="harry-said"><span class="orb" aria-hidden="true"></span><span>${t("Harry AI answered")} <strong>${answer}</strong></span>${mark(ok)}</p>
       <details class="raw"><summary>${icon("chevron")}${t("Show the exact prompt")}</summary><pre>${esc(prompt)}</pre></details>
     </div>`;
 
   return `<div class="steps-grid">
-    ${card("A", t("Before the race"), t("Harry only saw the odds"), t("Who are the three favourites?"),
+    ${card("A", t("Before the race"), t("Harry AI only saw the odds"), t("Who are the three favourites?"),
       `<th>#</th><th>${t("Horse")}</th><th class="num">V-odds</th>`, board,
       esc(event.llm.favourites.map((name, i) => `${name} ${odds(event.llm.odds[i])}`).join(", ")), event.checks.favourites, event.prompts[0])}
-    ${card("B", t("After the race"), t("Harry only saw the result"), t("Where did {horse} finish, and did it win?", { horse: esc(favourite) }),
+    ${card("B", t("After the race"), t("Harry AI only saw the result"), t("Where did {horse} finish, and did it win?", { horse: esc(favourite) }),
       `<th>${t("Place")}</th><th>${t("Horse")}</th>`, result,
       `${esc(finishText(event.llm.position))}, ${event.llm.won ? t("won") : t("did not win")}`,
       event.checks.position && event.checks.won, event.prompts[1])}
@@ -445,7 +445,7 @@ function drawFinishes(median, animateLast = false) {
       const right = Object.values(leg.checks).every(Boolean);
       const isNew = animateLast && i === legs.length - 1;
       const tip = t("{track}, leg {leg}: {horse}", { track: state.games[leg.game].track, leg: leg.leg, horse: leg.llm.favourites[0] })
-        + (right ? "" : t(" (Harry was wrong here)"));
+        + (right ? "" : t(" (Harry AI was wrong here)"));
       return `<span class="dot ${right ? "" : "off"} ${isNew ? "new" : ""}" title="${esc(tip)}">${leg.leg}</span>`;
     }).join("");
     return `<div class="column ${column === "1" ? "win" : ""}">
@@ -463,7 +463,7 @@ function drawFinishes(median, animateLast = false) {
   }
 }
 
-// ---------- Harry's answers to the four questions ----------
+// ---------- Harry AI's answers to the four questions ----------
 
 function resetAnswers() {
   ["favourites", "won", "median", "rate"].forEach((name) => setAnswer(name, null));
@@ -471,7 +471,7 @@ function resetAnswers() {
   $("#verdict").hidden = true;
 }
 
-// Questions 1 and 2 are answered per leg, so they fill in while Harry works
+// Questions 1 and 2 are answered per leg, so they fill in while Harry AI works
 function showLegAnswers() {
   const legs = state.legs;
   const count = (key) => legs.filter((leg) => leg.checks[key]).length;

@@ -8,6 +8,7 @@ The loop for one question:
 2. If it asked for tools, run them, show their tables on the page, give the results
    back to the model and go again (at most MAX_ROUNDS times).
 3. Otherwise its text is the answer.
+While it works, status events tell the page what it is doing ("Thinking", "Looking at leg 1 at Boden").
 
 Nothing is stored on the server. The page sends the last few messages with every question.
 """
@@ -21,7 +22,7 @@ from .words import answer_language, say
 MAX_ROUNDS = 4
 NUDGE = "If this answers the question, reply to the user now."  # added to tool results, small models need it
 
-SYSTEM = """You are Harry AI (Harry for short), the assistant on Aria ATG Case, a page about ATG horse racing \
+SYSTEM = """You are Harry AI, the assistant on Aria ATG Case, a page about ATG horse racing \
 results in Sweden. {model}
 
 You only help with ATG and horse racing: ATG's games, races, odds, favourites, horses, betting words and this page. \
@@ -53,7 +54,7 @@ pays back. 2.25 means 2.25 kr.
 - In a V-game you try to pick the winning horse in every leg (any horse, not only the favourite). \
 The more legs you get right, the more you win. V85 and V86 have 8 legs, GS75 has 7, V64 and V65 have 6, \
 V5 has 5, V4 has 4 and V3 has 3. dd (Dagens Dubbel) and ld (Lunchdubbel) have 2.
-- On this page you, Harry, answered every leg of the three most recent finished games of a game type: \
+- On this page you, Harry AI, answered every leg of the three most recent finished games of a game type: \
 you named the favourites and said how the favourite did, and plain code checked every one of your answers.
 
 How to answer: short and friendly, at most five sentences or a short list. When you need a tool, call it \
@@ -68,8 +69,12 @@ CLOUD = "You run on {name} by Anthropic, in the cloud on Microsoft Foundry."
 
 
 async def chat(messages: list[dict], game_type: str, lang: str = "en", mode: str = "local"):
-    """Answer the last message. Yields events: tool (with a table), token (text), done, then followups.
+    """Answer the last message. Yields events: status (what it is doing), tool (with a table),
+    token (text), done, then followups.
 
+    A status event comes before every model round ("Thinking") and before every tool call
+    ("Looking at leg 1 at Boden"), in the page's language. It is only for the page while it waits:
+    it is not sent back and the model never sees it.
     The done event lists the tool calls of this turn with their facts. The page keeps them with
     the answer and sends them back with later questions, so follow-ups ("and in that leg?")
     are answered from real data instead of the model's memory.
@@ -87,6 +92,7 @@ async def chat(messages: list[dict], game_type: str, lang: str = "en", mode: str
         answer, used, views = "", [], []
 
         for _ in range(MAX_ROUNDS):
+            yield {"type": "status", "state": "thinking", "text": say(lang, "Thinking")}
             text, calls = "", {}
             async for kind, value in stream(client, conversation, mode):
                 if kind == "text":
@@ -102,10 +108,12 @@ async def chat(messages: list[dict], game_type: str, lang: str = "en", mode: str
             calls = list(calls.values())
             conversation.append({"role": "assistant", "content": text, "tool_calls": calls})
             for call in calls:
-                facts, view, label = await tools.run(client, call["function"]["name"], arguments(call), game_type, lang)
-                used.append({"name": call["function"]["name"], "arguments": arguments(call), "facts": facts[:40]})
+                name, args = call["function"]["name"], arguments(call)
+                yield {"type": "status", "state": "looking", "text": tools.looking(name, args, game_type, games, lang)}
+                facts, view, label = await tools.run(client, name, args, game_type, lang)
+                used.append({"name": name, "arguments": args, "facts": facts[:40]})
                 views.append(view)
-                yield {"type": "tool", "name": call["function"]["name"], "label": label, "view": view}
+                yield {"type": "tool", "name": name, "label": label, "view": view}
                 conversation.append({"role": "tool", "tool_call_id": call["id"], "content": "\n".join([*facts, NUDGE])})
         else:  # still asking for tools after the last round
             answer = say(lang, "I could not finish that one. Try asking about one game or one leg.")

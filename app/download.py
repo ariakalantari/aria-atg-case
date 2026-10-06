@@ -1,4 +1,4 @@
-"""The first start: which models are ready, and how far the download of Harry's model has come,
+"""The first start: which models are ready, and how far the download of Harry AI's model has come,
 for the page (/api/status) and the terminal.
 
 llama.cpp saves the model in the shared "models" volume, in Hugging Face's cache layout:
@@ -67,14 +67,14 @@ async def announce():
         on = (await status(client))["claude"]
         log.info(f"Claude mode is on: {on['name']}." if on["ready"] else "Claude mode is off (it needs a Foundry key in .env).")
         while (now := await status(client))["llm"] != "ready":
-            line = "Starting Harry's model..."
+            line = "Starting Harry AI's model..."
             if (got := now.get("download")) and got["done"] < got["total"]:
-                line = (f"Downloading Harry's model, only on the first start: {got['done'] * 100 // got['total'] // 10 * 10}%"
+                line = (f"Downloading Harry AI's model, only on the first start: {got['done'] * 100 // got['total'] // 10 * 10}%"
                         f" of {got['total'] / 1e9:.1f} GB. The page shows the progress too.")
             elif got or now["llm"] == "loading":
-                line = "Loading Harry's model into memory..."
+                line = "Loading Harry AI's model into memory..."
             if line != said:
                 log.info(line)
                 said = line
             await asyncio.sleep(2)
-    log.info("Harry is ready.")
+    log.info("Harry AI is ready.")

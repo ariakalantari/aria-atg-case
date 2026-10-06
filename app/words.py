@@ -1,15 +1,27 @@
-"""Swedish for the few texts the server shows on the page (Harry's tool labels and tables).
+"""Swedish for the few texts the server shows on the page (Harry AI's status, tool labels and tables).
 The words follow ATG's own (avdelning, omgång, spelform, spelprocent, skräll), checked against atg.se.
 
 The English text is the key, so the code reads in plain English:
     say("sv", "Leg {leg}, {track}", leg=7, track="Boden")  ->  "Avdelning 7, Boden"
-Facts for the model stay in English. Harry answers in the language of the question (answer_language).
+Facts for the model stay in English. Harry AI answers in the language of the question (answer_language).
 """
 import re
 from datetime import datetime
 
 SWEDISH = {
-    # what Harry did (tool labels)
+    # what Harry AI is doing right now (status lines while it works, without dots: the page adds its own)
+    "Thinking": "Tänker",
+    "Comparing all game types": "Jämför alla spelformer",
+    "Looking at the {game_type} favourites": "Tittar på favoriterna i {game_type}",
+    "Looking at the latest {game_type} game": "Tittar på den senaste {game_type}-omgången",
+    "Looking at the latest {game_type} game at {track}": "Tittar på den senaste {game_type}-omgången på {track}",
+    "Looking at leg {leg} at {track}": "Tittar på avdelning {leg} på {track}",
+    "Looking at leg {leg} in {game_type}": "Tittar på avdelning {leg} i {game_type}",
+    "Looking at the {game_type} upsets": "Tittar på skrällarna i {game_type}",
+    "Looking at bets against the odds in {game_type}": "Tittar på spelprocent mot odds i {game_type}",
+    "Looking for the horse {horse}": "Letar efter hästen {horse}",
+    "Looking at the race data": "Tittar på loppen",
+    # what Harry AI did (tool labels)
     "Compared every game type": "Jämförde alla spelformer",
     "Looked for {game_type} games": "Letade efter {game_type}-omgångar",
     "Counted the favourites in {game_type}": "Räknade favoriterna i {game_type}",
@@ -90,7 +102,7 @@ def ordinal(n: float, lang: str = "en") -> str:
     return f"{n}{suffix}"
 
 
-# Which language to answer in (used for Harry's answers and its follow-up ideas)
+# Which language to answer in (used for Harry AI's answers and its follow-up ideas)
 SWEDISH_HINTS = {"och", "är", "vad", "vilken", "vilka", "hur", "jag", "på", "som", "inte", "med", "för", "kan", "visa",
                  "var", "den", "det", "ett", "om", "har", "spela", "avdelning", "omgång", "favoriten", "hej", "tack",
                  "sammanfatta", "spelprocent", "mot", "alla"}

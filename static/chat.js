@@ -1,4 +1,4 @@
-// The Harry AI sidebar, styled after ATG's own assistant panel. Harry chats freely and calls
+// The Harry AI sidebar, styled after ATG's own assistant panel. Harry AI chats freely and calls
 // tools when it needs race data. Nothing is saved anywhere: the page keeps this conversation
 // and sends the last few messages with each question. "New chat" clears it.
 // Uses helpers from app.js ($, esc, icon, readLines, errorText, columnLabel, state, mode) and
@@ -6,7 +6,10 @@
 
 const HISTORY_SENT = 7; // the last few messages the model sees (odd, so it starts with a question)
 const FADE_MS = 600;    // how long a new word takes to fade in
+const LOOK_MS = 900;    // the shortest time a "Looking at ..." status shows, so it can be read
+const FOLLOW_LAG = 12;  // how far (px) the thread may trail its bottom while it glides there
 const chat = { history: [], busy: null, tail: null }; // busy: the question being answered, tail: the last request (still sending follow-ups)
+const follow = { pinned: true, wrote: 0, frame: 0, until: 0 }; // the thread keeps to its bottom while pinned (scrollChat)
 const wide = window.matchMedia("(min-width: 1200px)");
 const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -15,16 +18,27 @@ function initChat() {
   $("#chat-close").addEventListener("click", () => setChatOpen(false));
   $("#chat-new").addEventListener("click", newChat);
   $("#chat-input").addEventListener("input", updateSend);
+  // Scrolling up to read stops the thread from following new text, scrolling back down starts it again
+  const list = $("#chat-messages");
+  list.addEventListener("wheel", (event) => event.deltaY < 0 && list.scrollTop > 0 && (follow.pinned = false), { passive: true });
+  list.addEventListener("scroll", () => {
+    const top = list.scrollTop;
+    if (Math.abs(top - follow.wrote) > 1) { // the user scrolled, not the glide
+      const gap = list.scrollHeight - list.clientHeight - top;
+      follow.pinned = gap < 1 || (top > follow.wrote && gap < 40);
+    }
+    follow.wrote = top;
+  });
   $("#chat-form").addEventListener("submit", (event) => {
     event.preventDefault();
-    if (chat.busy) chat.busy.abort(); // the button is a stop button while Harry answers
+    if (chat.busy) chat.busy.abort(); // the button is a stop button while Harry AI answers
     else askAssistant($("#chat-input").value);
   });
   $("#suggestions").addEventListener("click", (event) => {
     const idea = event.target.closest(".suggestion");
     if (idea) askAssistant(idea.textContent, idea);
   });
-  // On narrow screens, a tap on the dark backdrop (the body behind the drawer) closes Harry
+  // On narrow screens, a tap on the dark backdrop (the body behind the drawer) closes Harry AI
   document.body.addEventListener("click", (event) => {
     if (event.target === document.body && !wide.matches) setChatOpen(false);
   });
@@ -42,18 +56,19 @@ function newChat() {
   chat.tail?.abort(); // stop the last answer and its follow-ups, so nothing late lands in the new chat
   setBusy(null);
   chat.history = [];
+  follow.pinned = true;
   $("#chat-messages").innerHTML = heroHtml();
   $("#suggestions").innerHTML = suggestionsHtml();
   $("#suggestions").hidden = false;
 }
 
 // Called by app.js for report events: while nothing has been asked, the empty state and the
-// suggestions follow the game type on the page. Harry never asks anything by itself.
+// suggestions follow the game type on the page. Harry AI never asks anything by itself.
 function onReport(event) {
   if (event.type === "games" && !chat.history.length && !chat.busy) newChat();
 }
 
-// "Ask Harry about this leg" on the report: open the chat and ask about that leg
+// "Ask Harry AI about this leg" on the report: open the chat and ask about that leg
 function askAboutLeg(leg, track) {
   setChatOpen(true);
   askAssistant(t("Tell me about leg {leg} at {track}.", { leg, track }));
@@ -79,6 +94,7 @@ async function askAssistant(question, chip = null) {
   }).catch(() => null);
 
   $("#chat-input").value = "";
+  follow.pinned = true; // a new question always brings the thread back down
   await showQuestion(question, chip, stop.signal);
   if (chat.busy !== stop) return; // "New chat" (or a mode switch) came during the animation
   const reply = addReply();
@@ -125,7 +141,7 @@ function showFollowUps(questions) {
   ideas.innerHTML = chipsHtml(questions);
   ideas.hidden = false;
   if (!calm.matches) ideas.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 200, easing: "ease-out" });
-  scrollChat();
+  unfold(ideas); // the row opens its space, so the thread above glides up instead of jumping
 }
 
 function setBusy(controller) {
@@ -168,8 +184,10 @@ async function showQuestion(question, chip, signal) {
   const folding = [];
   if (hero) folding.push(hero.animate([{ opacity: 1 }, { opacity: 0, transform: "scale(0.97)" }], { duration: time(200), ...hold }).finished);
   if (!ideas.hidden) {
+    const height = ideas.offsetHeight; // as it is now, also halfway through opening
+    ideas.getAnimations().forEach((animation) => animation.cancel()); // a row still opening stops, so it cannot undo the clip (unfold)
     ideas.style.overflow = "hidden"; // clip while it shrinks
-    folding.push(ideas.animate([{ height: `${ideas.offsetHeight}px`, opacity: 1 }, { height: "0px", opacity: 0, paddingTop: "0px", paddingBottom: "0px" }],
+    folding.push(ideas.animate([{ height: `${height}px`, opacity: 1 }, { height: "0px", opacity: 0, paddingTop: "0px", paddingBottom: "0px" }],
       { duration: time(260), easing: "ease-in", ...hold }).finished);
   }
   await Promise.all(folding);
@@ -180,7 +198,7 @@ async function showQuestion(question, chip, signal) {
   ideas.innerHTML = "";
 
   list.append(bubble);
-  scrollChat();
+  scrollChat(Boolean(ghost)); // the chip flies to where the bubble ends up, so the thread must be there already
   if (!ghost) {
     bubble.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }],
       { duration: time(240), easing: "ease-out" });
@@ -206,16 +224,17 @@ async function showQuestion(question, chip, signal) {
   ghost.remove();
 }
 
-// One answer from Harry. Text, tool steps and tables are added in the order they arrive.
+// One answer from Harry AI. Text, tool steps and tables are added in the order they arrive, above
+// a status line that says what Harry AI is doing until the answer text starts.
 function addReply() {
   const node = document.createElement("div");
   node.className = "msg ai working";
-  node.innerHTML = `<span class="orb" aria-hidden="true"></span>
-    <div class="msg-body"><p class="thinking">${t("Reading your question")}</p></div>`;
+  node.innerHTML = `<span class="orb" aria-hidden="true"></span><div class="msg-body"></div>`;
   $("#chat-messages").append(node);
-  scrollChat();
 
   const body = node.querySelector(".msg-body");
+  const status = statusLine(body);
+  status.show(t("Thinking")); // at once, before the server says anything
   let block = null; // the text being written right now
   let text = "";
   let born = [];    // when each word of that text first appeared
@@ -226,40 +245,140 @@ function addReply() {
     let visible = text.slice(0, cut);
     if (!final && (visible.match(/\*\*/g) ?? []).length % 2) visible += "**"; // close a bold still on its way
     block.innerHTML = fadeIn(markdown(visible), born);
+    // The block joins the thread with its first whole word. Before that (a half word, a bare "- ")
+    // it would still be a part above the status line, and push it down (style.css .msg-body > * + *).
+    if (!block.isConnected && block.textContent.trim()) status.line.before(block);
+  }
+
+  // New parts go above the status line. A tool step and its card open their space smoothly.
+  function add(html, opening) {
+    const parts = document.createElement("template");
+    parts.innerHTML = html;
+    const added = [...parts.content.children];
+    status.line.before(...added);
+    if (opening) added.forEach(unfold);
   }
 
   return {
     show(event) {
-      body.querySelector(".thinking")?.remove();
+      if (event.type === "status") status.show(event.text || t("Thinking"), event.state === "looking" ? LOOK_MS : 0);
       if (event.type === "token") {
         if (!block) {
           block = document.createElement("div");
           block.className = "ai-text";
-          body.append(block);
           text = "";
           born = [];
         }
         text += event.text;
         render(false);
+        if (block.textContent.trim()) status.hide(); // the first word takes the status line's place, at the same height
       }
       if (event.type === "tool") {
         if (block) render(true);
         block = null; // text after a tool starts a new paragraph block
-        body.insertAdjacentHTML("beforeend", `<p class="tool-step">${icon("check")}${esc(event.label)}</p>
-          ${event.view ? viewHtml(event.view) : ""}<p class="thinking">${t("Reading the results")}</p>`);
+        add(`<p class="tool-step">${icon("check")}${esc(event.label)}</p>${event.view ? viewHtml(event.view) : ""}`, true);
+        status.show(t("Thinking")); // the model reads the result next (the server may also say so)
       }
       if (event.type === "error") {
-        body.insertAdjacentHTML("beforeend", `<p class="ai-text error">${esc(errorText(event))}</p>`);
+        status.hide();
+        add(`<p class="ai-text error">${esc(errorText(event))}</p>`);
       }
       scrollChat();
     },
     finish(stopped) {
       if (block) render(true);
-      body.querySelector(".thinking")?.remove();
-      if (stopped) body.insertAdjacentHTML("beforeend", `<p class="note">${t("Stopped")}</p>`);
+      // What came last takes the status line's place. With nothing to take it, the line folds away.
+      status.hide(!stopped && !block?.textContent.trim());
+      if (stopped) add(`<p class="note">${t("Stopped")}</p>`);
       node.classList.remove("working");
+      scrollChat(); // the last word (held back while streaming) or the note may need room below
     },
   };
+}
+
+// The status line under an answer: "Thinking…" while the model works, "Looking at leg 1 at Boden…"
+// while a tool runs (the server sends both as status events). A new label fades in as the old one
+// fades out, on the same single line, so the thread never moves. A "Looking at" label stays at least
+// LOOK_MS so it can be read, but answer text never waits for it: it hides the line at once.
+function statusLine(body) {
+  const line = document.createElement("p");
+  line.className = "status-line";
+  line.hidden = true;
+  body.append(line);
+  let queue = []; // labels waiting for the one on show to have had its time
+  let until = 0;  // when the label on show may give way
+  let timer = 0;
+
+  function write(text) {
+    const old = line.querySelector("span:not(.gone)");
+    if (!line.hidden && old?.textContent === text) return;
+    const label = document.createElement("span");
+    label.textContent = text; // the server's text can hold a name the model wrote, so never as HTML
+    if (line.hidden) {
+      line.replaceChildren(label);
+      line.hidden = false;
+      return unfold(line);
+    }
+    line.append(label);
+    if (!old) return;
+    if (calm.matches) return old.remove();
+    label.className = "next"; // fades in once the old label has gone (style.css)
+    old.className = "gone";
+    old.setAttribute("aria-hidden", "true");
+    old.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150, easing: "ease-in", fill: "forwards" })
+      .finished.then(() => old.remove(), () => {});
+  }
+
+  function next() {
+    clearTimeout(timer);
+    const wait = until - performance.now();
+    if (wait > 0) return void (timer = setTimeout(next, wait));
+    const label = queue.shift();
+    if (!label) return;
+    write(`${label.text}…`);
+    until = performance.now() + label.hold;
+    if (queue.length) timer = setTimeout(next, label.hold);
+  }
+
+  return {
+    line,
+    show(text, hold = 0) {
+      queue = [...queue.filter((label) => label.hold), { text, hold }]; // a waiting "Thinking" gives way to the newer label
+      next();
+    },
+    hide(fold = false) {
+      clearTimeout(timer);
+      queue = [];
+      until = 0;
+      if (line.hidden) return;
+      if (!fold || calm.matches) return void (line.hidden = true);
+      line.style.overflow = "hidden";
+      const { height, marginTop } = getComputedStyle(line);
+      const closing = line.animate([{ height, marginTop }, { height: "0px", marginTop: "0px" }], { duration: 200, easing: "ease", fill: "forwards" });
+      closing.finished.then(() => {
+        line.hidden = true;
+        line.style.overflow = "";
+        closing.cancel();
+      }, () => {});
+    },
+  };
+}
+
+// A new part of the thread opens its space: it grows from nothing to its height (and its gap
+// above), so whatever is below glides down and the thread follows, instead of everything jumping
+function unfold(part) {
+  if (!calm.matches && part.isConnected) {
+    const { height, marginTop, paddingTop, paddingBottom } = getComputedStyle(part);
+    const ms = Math.min(600, 200 + part.offsetHeight * 0.6); // a taller part takes a little longer
+    part.style.overflow = "hidden";
+    // Cancelled (the follow-up row folding away while it opens): the fold keeps the clip, so leave it
+    part.animate([
+      { height: "0px", marginTop: "0px", paddingTop: "0px", paddingBottom: "0px" },
+      { height, marginTop, paddingTop, paddingBottom },
+    ], { duration: ms, easing: "ease" }).finished.then(() => (part.style.overflow = ""), () => {});
+    follow.until = Math.max(follow.until, performance.now() + ms);
+  }
+  scrollChat();
 }
 
 // Wrap each word in a span that fades in from a blur. A word keeps its start time across
@@ -274,9 +393,33 @@ function fadeIn(html, born) {
   }))).join("");
 }
 
-function scrollChat() {
+// Keep the newest part of the thread in view while the user is at the bottom. It glides there
+// instead of jumping (instant: at once, for the flying chip and reduced motion).
+function scrollChat(instant = false) {
+  if (!follow.pinned) return;
+  if (!instant && !calm.matches) return void (follow.frame ||= requestAnimationFrame(glide));
   const list = $("#chat-messages");
   list.scrollTop = list.scrollHeight;
+  follow.wrote = list.scrollTop;
+}
+
+// One frame of gliding: part of the way down, so a new line or bubble eases into view. While a
+// part opens, never more than FOLLOW_LAG behind, so it is followed frame by frame.
+// Steps are whole pixels: Safari drops the fraction of a scrollTop write, so a step under 1px would
+// never arrive. A frame that cannot move the thread is at its bottom, so the glide stops there.
+function glide() {
+  const list = $("#chat-messages");
+  const before = list.scrollTop;
+  const left = list.scrollHeight - list.clientHeight - before;
+  const opening = performance.now() < follow.until;
+  if (follow.pinned && left > 0) {
+    const step = Math.ceil(Math.max(left * 0.3, opening ? left - FOLLOW_LAG : 0));
+    list.scrollTop = left < 2 ? list.scrollHeight : before + step;
+    if (list.scrollTop === before) list.scrollTop = list.scrollHeight; // the engine rounded the step away: go to the bottom
+    follow.wrote = list.scrollTop;
+  }
+  const moved = list.scrollTop !== before;
+  follow.frame = follow.pinned && ((left >= 2 && moved) || opening) ? requestAnimationFrame(glide) : 0;
 }
 
 // ---------- pieces of html ----------

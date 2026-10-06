@@ -21,6 +21,7 @@
   --shadow: 0 1px 6px rgba(0, 0, 0, 0.03), 0 8px 40px rgba(0, 0, 0, 0.06);
   --shadow-raised: 0 3px 8px rgba(0, 0, 0, 0.08), 0 12px 24px rgba(0, 0, 0, 0.15);
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --blur: 4px; /* how blurred things start when they fade in: words, table rows, the status line */
   --display: "Exo 2", "Arial Black", sans-serif; /* stands in for ATG's own font */
   --body: Roboto, system-ui, "Segoe UI", sans-serif;
   --topbar: 72px;
@@ -101,7 +102,7 @@ button:focus-visible, summary:focus-visible {
   padding: 0 24px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between; /* the mode switch on the left, the flags and Harry AI on the right */
 }
 
 /* Centered, like ATG's logo */
@@ -170,19 +171,6 @@ button:focus-visible, summary:focus-visible {
 .harry-toggle:hover, .ask-harry:hover { background: #F5F9FD; }
 .harry-toggle .orb { width: 20px; height: 20px; }
 .harry-toggle .name { color: var(--text); font: italic 800 16px/1 var(--display); text-transform: uppercase; }
-
-.beta {
-  display: inline-grid;
-  place-items: center;
-  height: 14px;
-  padding: 0 4px;
-  border-radius: 2.6px;
-  background: var(--yellow);
-  color: var(--heading);
-  font: 700 9px/1 var(--body);
-  letter-spacing: 0.14px;
-  text-transform: uppercase;
-}
 
 /* The assistant's face: a blue orb, like the one on ATG's "Fråga AI" button */
 .orb {
@@ -310,7 +298,7 @@ button:focus-visible, summary:focus-visible {
   font-weight: 500;
 }
 
-/* ---------- Harry's answers to the four questions ---------- */
+/* ---------- Harry AI's answers to the four questions ---------- */
 
 .answers { padding: 0; overflow: hidden; }
 .answers-head { display: flex; align-items: center; gap: 14px; padding: 20px 24px 16px; }
@@ -530,7 +518,7 @@ button:focus-visible, summary:focus-visible {
 .leg.right .verdict { color: var(--good); }
 .leg.wrong .verdict { color: var(--loss); }
 
-/* "What Harry saw": ATG's expanded row, a light blue panel under the row */
+/* "What Harry AI saw": ATG's expanded row, a light blue panel under the row */
 .leg-detail {
   display: grid;
   gap: 14px;
@@ -573,7 +561,7 @@ button:focus-visible, summary:focus-visible {
   font-weight: 700;
 }
 
-/* The question Harry was asked, shaped like a chat message */
+/* The question Harry AI was asked, shaped like a chat message */
 .task {
   justify-self: start;
   padding: 8px 14px;
@@ -591,7 +579,7 @@ button:focus-visible, summary:focus-visible {
 .board .num { text-align: right; }
 .board .rank { width: 48px; color: var(--soft); font: italic 800 13px var(--display); }
 .board tr.picked td { background: rgba(200, 228, 249, 0.4); color: var(--heading); font-weight: 700; }
-/* Harry's favourites, tagged in both tables: Fav 1 (the one asked about) in brand blue, 2 and 3 in grey */
+/* Harry AI's favourites, tagged in both tables: Fav 1 (the one asked about) in brand blue, 2 and 3 in grey */
 .fav-tag { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 4px; background: var(--chip); color: var(--soft); font: 700 10px/16px var(--body); letter-spacing: 0.3px; vertical-align: 1px; white-space: nowrap; }
 .fav-tag.first { background: var(--brand); color: #fff; }
 
@@ -687,7 +675,7 @@ button:focus-visible, summary:focus-visible {
 .text-button .icon { width: 18px; height: 18px; }
 .text-button:hover { color: #0974BF; text-decoration: underline; }
 
-.harry-mark { display: flex; align-items: center; gap: 6px; color: var(--text); font: italic 800 20px/1 var(--display); text-transform: uppercase; }
+.harry-mark { color: var(--text); font: italic 800 20px/1 var(--display); text-transform: uppercase; }
 
 .icon-button {
   justify-self: end;
@@ -706,7 +694,8 @@ button:focus-visible, summary:focus-visible {
 .icon-button:hover { background: rgba(200, 228, 249, 0.28); }
 
 
-.messages { flex: 1; overflow-y: auto; display: grid; align-content: start; gap: 20px; padding: 16px 20px; }
+/* The thread scrolls itself to its bottom (chat.js scrollChat), so the browser's own scroll anchoring stays out */
+.messages { flex: 1; overflow-y: auto; overflow-anchor: none; display: grid; align-content: start; gap: 20px; padding: 16px 20px; }
 .messages:has(.hero) { align-content: center; }
 
 /* The empty state: orb, name and one line, centered */
@@ -729,9 +718,11 @@ button:focus-visible, summary:focus-visible {
 }
 
 /* Answers are plain text next to the orb, no bubble */
-.msg.ai { display: flex; align-items: flex-start; gap: 10px; }
+.msg.ai { display: flex; align-items: flex-start; gap: 10px; animation: rise 0.2s var(--ease) both; }
 .msg.ai > .orb { margin-top: 1px; }
-.msg-body { flex: 1; min-width: 0; display: grid; gap: 10px; }
+.msg-body { flex: 1; min-width: 0; display: grid; }
+/* A margin, not a grid gap: a new part opens its gap together with its height (chat.js unfold) */
+.msg-body > * + * { margin-top: 10px; }
 
 .ai-text { color: var(--text); font-size: 16px; line-height: 22px; overflow-wrap: anywhere; }
 .ai-text p + p, .ai-text p + ul, .ai-text ul + p { margin-top: 10px; }
@@ -743,9 +734,26 @@ button:focus-visible, summary:focus-visible {
 /* Streaming: each new word fades in from a blur (chat.js wraps new words in .fade) */
 .fade { display: inline-block; animation: fade-in 0.6s ease-out both; }
 
-/* Status line before the answer, in link blue with moving dots */
-.thinking { color: var(--link); font-size: 16px; line-height: 22px; }
-.thinking::after { content: "..."; display: inline-block; width: 0; overflow: hidden; vertical-align: bottom; animation: dots 1.2s steps(4) infinite; }
+/* The status line under the answer ("Thinking…", "Looking at leg 1 at Boden…"): link blue on one
+   line, with a light sweeping across it. A new label fades in from a blur as the old one fades out. */
+.status-line { position: relative; min-width: 0; font-size: 16px; line-height: 22px; } /* min-width: a long label ends in "…" instead of widening the thread */
+.status-line > span {
+  display: inline-block; /* as wide as the label, so the sweep crosses the words and not the empty line after them */
+  max-width: 100%;
+  vertical-align: top; /* keeps the line 22px high (an inline-block that clips sits on its bottom edge) */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* Three text widths wide, so at rest (and with reduced motion) only plain link blue shows.
+     The light is the pale blue of the picked rows. */
+  background: linear-gradient(90deg, var(--link) 44%, rgb(200, 228, 249) 50%, var(--link) 56%) 0 0 / 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: fade-in 0.6s ease-out both, sweep 1.8s linear infinite;
+}
+.status-line > .gone { position: absolute; top: 0; left: 0; }
+.status-line > .next { animation-delay: 0.15s, 0s; } /* the old label fades out first, so the two never overlap */
 
 .tool-step { justify-self: start; display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-size: 12px; font-weight: 500; }
 .tool-step .icon { width: 16px; height: 16px; color: var(--good); }
@@ -848,8 +856,9 @@ button:focus-visible, summary:focus-visible {
   text-align: center;
 }
 
-/* A plain white card, and the title led by ATG's small game tag (the colored "V85" chip) */
-.data-card { margin: 0; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: var(--radius); background: #fff; }
+/* A plain white card, and the title led by ATG's small game tag (the colored "V85" chip).
+   Only the figure's own side and bottom margins go: the gap above is the thread's (.msg-body > * + *). */
+.data-card { margin-inline: 0; margin-bottom: 0; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: var(--radius); background: #fff; }
 .data-card figcaption { display: flex; align-items: center; gap: 8px; padding: 12px 12px 8px; color: var(--heading); font-size: 14px; font-weight: 700; }
 
 .mini-tiles { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
@@ -944,7 +953,7 @@ button:focus-visible, summary:focus-visible {
 }
 
 /* ---------- first start ---------- */
-/* While Harry's model downloads, the setup screen shows alone under the top bar */
+/* While Harry AI's model downloads, the setup screen shows alone under the top bar */
 
 body.setting-up .layout, body.setting-up .footer, body.setting-up .harry-toggle { display: none; }
 .setup { min-height: calc(100vh - var(--topbar)); display: grid; place-items: center; padding: 24px 16px; }
@@ -977,9 +986,9 @@ li.done .bar span { background: var(--good); }
 
 @keyframes drop { from { transform: translateY(-14px); opacity: 0; } }
 @keyframes pulse { to { opacity: 0.3; } }
-@keyframes fade-in { from { opacity: 0; filter: blur(6px); } }
+@keyframes fade-in { from { opacity: 0; filter: blur(var(--blur)); } }
 @keyframes rise { from { opacity: 0; transform: translateY(4px); } }
-@keyframes dots { to { width: 1.2em; } }
+@keyframes sweep { from { background-position: 100% 0; } to { background-position: 0 0; } }
 @keyframes skeleton { 50% { opacity: 0.4; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes roll { from { transform: translateY(0); } }
@@ -993,7 +1002,6 @@ li.done .bar span { background: var(--good); }
 @media (max-width: 899px) {
   :root { --topbar: 60px; }
   .topbar-inner, .page { padding-left: 16px; padding-right: 16px; }
-  .topbar-inner { justify-content: space-between; }
   .wordmark { position: static; transform: none; font-size: 20px; }
   .page { gap: 16px; padding-top: 16px; }
   .card { padding: 16px; }
@@ -1032,13 +1040,18 @@ li.done .bar span { background: var(--good); }
 @media (max-width: 599px) {
   .wordmark { font-size: 17px; }
   .topbar-actions { gap: 8px; }
-  .harry-toggle .beta, .harry-toggle .name { display: none; } /* the orb alone, so both switches fit */
+  .harry-toggle .name { display: none; } /* the orb alone, so both switches fit */
   .harry-toggle { padding: 0 9px; }
+}
+
+/* Small phones (360px): the wordmark sits between the two switches, so it gets a little smaller to keep clear of them */
+@media (max-width: 379px) {
+  .wordmark { font-size: 15px; }
 }
 
 /* The smallest phones (320px): a little tighter so the top bar still fits */
 @media (max-width: 359px) {
-  .wordmark { font-size: 14px; }
+  .wordmark { font-size: 13px; }
   .topbar-actions { gap: 6px; }
   .lang-switch, .mode-switch { gap: 2px; padding: 2px; }
 }

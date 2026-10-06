@@ -92,3 +92,43 @@ async def test_run_uses_the_page_game_type_and_handles_unknown_tools(v85, monkey
     assert asked == ["V85"] and label == "Looked for upsets in V85" and view
     facts, view, label = await tools.run(None, "make_tea", {}, "V85")
     assert facts == ["There is no tool called make_tea."] and view is None
+
+
+@pytest.mark.parametrize("name, args, english, swedish", [
+    ("leg_details", {"game_type": "V85", "leg": 1, "track": "boden"},
+     "Looking at leg 1 at Boden", "Tittar på avdelning 1 på Boden"),
+    ("favourite_stats", {"game_type": "V85"}, "Looking at the V85 favourites", "Tittar på favoriterna i V85"),
+    ("compare_game_types", {}, "Comparing all game types", "Jämför alla spelformer"),
+    ("game_overview", {"game_type": "V85", "track": "solvalla"},
+     "Looking at the latest V85 game at Solvalla", "Tittar på den senaste V85-omgången på Solvalla"),
+    ("upsets", {"game_type": "V85"}, "Looking at the V85 upsets", "Tittar på skrällarna i V85"),
+    ("bets_vs_odds", {"game_type": "V85"},
+     "Looking at bets against the odds in V85", "Tittar på spelprocent mot odds i V85"),
+    ("find_horse", {"name": "Intro"}, "Looking for the horse Intro", "Letar efter hästen Intro"),
+    ("make_tea", {}, "Looking at the race data", "Tittar på loppen"),
+])
+def test_status_for_every_tool_in_both_languages(v85, name, args, english, swedish):
+    assert tools.looking(name, args, "V85", v85, "en") == english
+    assert tools.looking(name, args, "V85", v85, "sv") == swedish
+
+
+def test_status_names_the_track_the_tool_will_use(v85):
+    assert tools.looking("leg_details", {"leg": 3}, "V85", v85) == "Looking at leg 3 at Boden"  # the latest game
+    assert tools.looking("game_overview", {"track": "  Solvalla "}, "V85", v85) == "Looking at the latest V85 game at Solvalla"
+    assert tools.looking("leg_details", {"leg": 3, "track": "Kalmar"}, "V85", v85) == "Looking at leg 3 at Kalmar"
+    # Another game type's games are not loaded yet: the track as written, or none
+    assert tools.looking("leg_details", {"game_type": "V86", "leg": 3, "track": "Åby"}, "V85", v85) == "Looking at leg 3 at Åby"
+    assert tools.looking("leg_details", {"game_type": "V86", "leg": 3}, "V85", v85) == "Looking at leg 3 in V86"
+    assert tools.looking("game_overview", {"game_type": "V86"}, "V85", v85, "sv") == "Tittar på den senaste V86-omgången"
+    assert tools.looking("game_overview", {}, "V85", []) == "Looking at the latest V85 game"  # no finished games
+
+
+def test_status_falls_back_for_bad_arguments(v85):
+    general = "Looking at the race data"
+    for leg in (None, "7", 7.5, True, 0, -1, 10**30):
+        assert tools.looking("leg_details", {"leg": leg}, "V85", v85) == general
+    for horse in (None, "", "ab", 42, "x" * 41, {"name": "Intro"}):
+        assert tools.looking("find_horse", {"name": horse}, "V85", v85) == general
+    assert tools.looking("favourite_stats", {"game_type": "V99"}, "V85", v85) == "Looking at the V85 favourites"  # like run()
+    assert tools.looking("leg_details", {"game_type": "V86", "leg": 2, "track": ["Åby"]}, "V85", v85) == "Looking at leg 2 in V86"
+    assert tools.looking("find_horse", {"name": "Frank\nS.H."}, "V85", v85) == "Looking for the horse Frank S.H."

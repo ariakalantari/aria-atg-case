@@ -1,9 +1,9 @@
-"""Follow-up ideas after each Harry answer: two or three short questions to ask next.
+"""Follow-up ideas after each Harry AI answer: two or three short questions to ask next.
 
 Code does most of the work, the model only chooses:
-1. Preset ideas from what Harry just looked up (the tools it ran, with their tracks, legs and
+1. Preset ideas from what Harry AI just looked up (the tools it ran, with their tracks, legs and
    horses), like the suggestions in an empty chat. The tools can always answer them.
-2. When Harry looked up race data, the model picks the two ideas that fit the conversation best
+2. When Harry AI looked up race data, the model picks the two ideas that fit the conversation best
    and may write one short question of its own (forced into a small JSON schema).
 3. Code checks the result and falls back to the preset ideas if anything is off.
 """
@@ -20,7 +20,7 @@ MAX_LENGTH = 48         # longer chips do not fit the panel on a phone
 
 async def suggest(client: httpx.AsyncClient, messages: list[dict], answer: str, turn: list[tuple[dict, dict | None]],
                   page_type: str, games: list[Game], lang: str, mode: str = "local") -> list[str]:
-    """Up to three follow-up questions. turn holds (call, view) for each tool Harry ran this time."""
+    """Up to three follow-up questions. turn holds (call, view) for each tool Harry AI ran this time."""
     asked = {tools.plain(m["content"]) for m in messages if m["role"] == "user"}
     ideas = [idea for idea in candidates(turn, page_type, games, lang) if tools.plain(idea) not in asked][:6]
     if not turn or len(ideas) < 3:  # small talk, words and rules, or a polite no: preset ideas, no model call
@@ -33,7 +33,7 @@ async def suggest(client: httpx.AsyncClient, messages: list[dict], answer: str, 
 
 
 def candidates(turn: list[tuple[dict, dict | None]], page_type: str, games: list[Game], lang: str) -> list[str]:
-    """Preset ideas, best first: from each tool Harry ran, then general ones for the page."""
+    """Preset ideas, best first: from each tool Harry AI ran, then general ones for the page."""
     ideas = []
     for call, view in turn:
         ideas += ideas_after(call["name"], call["arguments"], view, page_type, games, lang)
@@ -107,11 +107,11 @@ def prompt(question: str, answer: str, turn: list[tuple[dict, dict | None]], ide
     options = "\n".join(f"- {idea}" for idea in ideas)
     language = "Swedish, with ATG's words (avdelning, omgång, spelform, favorit, skräll)" if lang == "sv" else "English"
     text = (
-        f"Someone asked Harry, the assistant on a page about ATG horse racing results: {question}\n"
-        f"Harry looked up:\n{facts}\nHarry answered: {answer[:400]}\n\n"
+        f"Someone asked Harry AI, the assistant on a page about ATG horse racing results: {question}\n"
+        f"Harry AI looked up:\n{facts}\nHarry AI answered: {answer[:400]}\n\n"
         f"Ideas for what to ask next:\n{options}\n\n"
         "Pick the two ideas they would most likely ask next. Then write one new question in "
-        f"{language}, at most 8 words, about something Harry's answer did not cover yet. It must be answerable "
+        f"{language}, at most 8 words, about something Harry AI's answer did not cover yet. It must be answerable "
         "from the latest three games (their favourites, odds, winners, upsets, legs or horses), so nothing about "
         "years, drivers, trainers or coming races. Leave it empty if no good question fits."
     )

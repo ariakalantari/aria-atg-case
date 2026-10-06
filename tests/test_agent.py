@@ -54,14 +54,23 @@ def fake_model(load, monkeypatch):
     return set_replies
 
 
-async def run(question: str) -> list[dict]:
-    return [event async for event in agent.chat([{"role": "user", "content": question}], "V85")]
+async def run(question: str, lang: str = "en") -> list[dict]:
+    return [event async for event in agent.chat([{"role": "user", "content": question}], "V85", lang)]
+
+
+def without_status(events: list[dict]) -> list[dict]:
+    return [event for event in events if event["type"] != "status"]
+
+
+def call(name: str, arguments: str) -> list[dict]:
+    """A whole tool call in one piece."""
+    return [{"tool_calls": [{"index": 0, "id": "xyz", "function": {"name": name, "arguments": arguments}}]}]
 
 
 @pytest.mark.anyio
 async def test_tool_call_then_answer(fake_model):
     requests = fake_model(LEG_7_CALL, ANSWER)
-    tool, *tokens, done, follow_ups = await run("Show me leg 7 at Boden")
+    tool, *tokens, done, follow_ups = without_status(await run("Show me leg 7 at Boden"))
 
     assert tool["type"] == "tool" and tool["label"] == "Looked up leg 7 at Boden"
     assert tool["view"]["title"] == "Leg 7, Boden"
@@ -82,7 +91,7 @@ async def test_tool_call_then_answer(fake_model):
 async def test_plain_chat_needs_no_tools(fake_model):
     fake_model([{"content": "Hi! I can tell you how the favourites did."}])
     events = await run("Hi!")
-    assert [e["type"] for e in events] == ["token", "done", "followups"]
+    assert [e["type"] for e in events] == ["status", "token", "done", "followups"]
     assert events[-1]["questions"] == ["Summarise V85", "Biggest upsets in V85", "Compare all game types"]
     assert not follow_up_requests  # no race data looked up, so preset ideas and no extra model call
 
@@ -131,13 +140,72 @@ async def test_gives_up_politely_after_too_many_tool_rounds(fake_model):
     events = await run("Show me leg 7 at Boden")
     assert len(requests) == agent.MAX_ROUNDS
     assert events[-3]["text"].startswith("I could not finish that one.")
+    assert [e["type"] for e in events][-3:] == ["token", "done", "followups"]
+    assert sum(e.get("state") == "thinking" for e in events) == agent.MAX_ROUNDS  # one per model round
 
 
 @pytest.mark.anyio
 async def test_dashes_are_removed(fake_model):
     fake_model([{"content": "Close race \u2014 really close."}])
     events = await run("Hi!")
-    assert events[0]["text"] == "Close race - really close."
+    assert events[1]["text"] == "Close race - really close."
+
+
+@pytest.mark.anyio
+async def test_status_says_what_harry_ai_is_doing(fake_model):
+    requests = fake_model(LEG_7_CALL, ANSWER)
+    events = await run("Show me leg 7 at Boden")
+    assert [(e["type"], e.get("state")) for e in events] == [
+        ("status", "thinking"), ("status", "looking"), ("tool", None),
+        ("status", "thinking"), ("token", None), ("token", None), ("done", None), ("followups", None)]
+    assert events[0]["text"] == "Thinking" and events[3]["text"] == "Thinking"
+    assert events[1]["text"] == "Looking at leg 7 at Boden"  # present tense before, past tense after
+    assert events[2]["label"] == "Looked up leg 7 at Boden"
+
+    # Only for the page: the model never sees a status, and the page gets back only the tool call
+    assert [m["role"] for m in requests[1]["messages"]] == ["system", "user", "assistant", "tool"]
+    assert [c["name"] for c in events[-2]["calls"]] == ["leg_details"]
+
+
+@pytest.mark.anyio
+async def test_status_comes_before_each_tool_call_in_a_round(fake_model):
+    two_calls = [{"tool_calls": [  # two tool calls in one model reply
+        {"index": 0, "id": "a", "function": {"name": "leg_details", "arguments": '{"game_type": "V85", "leg": 7, "track": "Boden"}'}},
+        {"index": 1, "id": "b", "function": {"name": "leg_details", "arguments": '{"game_type": "V85", "leg": 8, "track": "Boden"}'}},
+    ]}]
+    requests = fake_model(two_calls, ANSWER)
+    events = await run("Show me legs 7 and 8 at Boden")
+    steps = [(e["type"], e.get("text") or e.get("label")) for e in events if e["type"] in ("status", "tool")]
+    assert steps == [
+        ("status", "Thinking"),
+        ("status", "Looking at leg 7 at Boden"), ("tool", "Looked up leg 7 at Boden"),
+        ("status", "Looking at leg 8 at Boden"), ("tool", "Looked up leg 8 at Boden"),
+        ("status", "Thinking"),  # the next round, with both results
+    ]
+    assert [m["role"] for m in requests[1]["messages"]] == ["system", "user", "assistant", "tool", "tool"]
+
+
+@pytest.mark.anyio
+async def test_status_follows_the_page_language(fake_model):
+    fake_model(call("game_overview", '{"game_type": "V85"}'), ANSWER)
+    events = await run("Show me the latest game", "sv")  # an English question on the Swedish page
+    texts = [e["text"] for e in events if e["type"] == "status"]
+    assert texts == ["Tänker", "Tittar på den senaste V85-omgången på Boden", "Tänker"]  # no track: the latest game
+
+
+@pytest.mark.anyio
+@pytest.mark.parametrize("name, arguments", [
+    ("make_tea", '{"cups": 2}'),                # a tool that does not exist
+    ("leg_details", '{not json'),               # arguments that are not JSON
+    ("leg_details", '{"leg": "seven"}'),        # a leg that is not a number
+    ("find_horse", '{"game_type": "V85"}'),     # no horse name
+])
+async def test_status_falls_back_for_unknown_tools_and_bad_arguments(fake_model, name, arguments):
+    fake_model(call(name, arguments), ANSWER)
+    events = await run("Show me something")
+    looking = [e for e in events if e.get("state") == "looking"]
+    assert [e["text"] for e in looking] == ["Looking at the race data"]
+    assert [e["type"] for e in events][-2:] == ["done", "followups"]  # the answer still finishes
 
 
 def test_earlier_tool_calls_are_replayed_as_tool_messages():
