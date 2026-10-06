@@ -60,3 +60,21 @@ async def test_size_is_looked_up_once(blobs):
 async def test_unknown_size_when_hugging_face_fails(blobs):
     http, _ = client({"error": "not found"}, 404)
     assert await download.progress(http) is None
+
+
+@pytest.mark.anyio
+async def test_status_has_what_the_setup_screen_reads(blobs, monkeypatch):
+    """The page reads all of these while it waits for the model.
+    Without model it stopped checking and the setup screen froze."""
+    async def offline(client):
+        return "offline"
+
+    async def no_claude():
+        return {"ready": False, "model": None}
+
+    monkeypatch.setattr(download.ask, "status", offline)
+    monkeypatch.setattr(download.claude, "status", no_claude)
+    http, _ = client()
+    assert await download.status(http) == {
+        "llm": "offline", "name": "Qwen 3.5 2B", "model": "unsloth/Qwen3.5-2B-GGUF:Q4_K_M",
+        "claude": {"ready": False, "name": None}, "download": {"done": 0, "total": 1000}}

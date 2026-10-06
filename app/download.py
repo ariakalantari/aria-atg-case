@@ -50,7 +50,8 @@ async def progress(client: httpx.AsyncClient) -> dict | None:
 async def status(client: httpx.AsyncClient) -> dict:
     """Is the local model ready (and while it downloads, how far it has come)? Can Claude mode run?"""
     state, on = await ask.status(client), await claude.status()
-    result = {"llm": state, "name": ask.display(MODEL),
+    # model is the Hugging Face id, for the setup screen's source line; name is for people
+    result = {"llm": state, "name": ask.display(MODEL), "model": MODEL,
               "claude": {"ready": on["ready"], "name": on["model"] and ask.display(on["model"])}}
     if state == "offline":  # llama.cpp only starts listening once the model is downloaded
         result["download"] = await progress(client)

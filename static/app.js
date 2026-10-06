@@ -55,7 +55,7 @@ let nextCheck = null; // the timer for the next status check while the setup scr
 
 // Claude mode needs no download, so it starts at once. Local mode waits for its model.
 async function waitForModel() {
-  let status = { llm: "offline", name: "", claude: { ready: false } };
+  let status = { llm: "offline", name: "", model: "", claude: { ready: false } }; // for when the app cannot be reached
   try {
     status = await (await fetch("/api/status")).json();
   } catch {}
@@ -64,8 +64,8 @@ async function waitForModel() {
   showMode();
   if (mode === "claude" || status.llm === "ready") return startPage();
   started = false;
+  nextCheck = setTimeout(waitForModel, 1000); // first, so an error drawing the screen cannot stop the checks
   showSetup(status);
-  nextCheck = setTimeout(waitForModel, 1000);
 }
 
 function showSetup(status) {
