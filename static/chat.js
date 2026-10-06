@@ -280,6 +280,8 @@ function addReply() {
         status.show(t("Thinking")); // the model reads the result next (the server may also say so)
       }
       if (event.type === "error") {
+        if (block) render(true); // the answer ends here: its text, even a half first word, goes above the error
+        block = null;
         status.hide();
         add(`<p class="ai-text error">${esc(errorText(event))}</p>`);
       }
@@ -352,8 +354,9 @@ function statusLine(body) {
       until = 0;
       if (line.hidden) return;
       if (!fold || calm.matches) return void (line.hidden = true);
+      const { height, marginTop } = getComputedStyle(line); // as it is now, also halfway through opening
+      line.getAnimations().forEach((animation) => animation.cancel()); // an opening stops, so it cannot undo the clip (unfold)
       line.style.overflow = "hidden";
-      const { height, marginTop } = getComputedStyle(line);
       const closing = line.animate([{ height, marginTop }, { height: "0px", marginTop: "0px" }], { duration: 200, easing: "ease", fill: "forwards" });
       closing.finished.then(() => {
         line.hidden = true;
@@ -371,7 +374,7 @@ function unfold(part) {
     const { height, marginTop, paddingTop, paddingBottom } = getComputedStyle(part);
     const ms = Math.min(600, 200 + part.offsetHeight * 0.6); // a taller part takes a little longer
     part.style.overflow = "hidden";
-    // Cancelled (the follow-up row folding away while it opens): the fold keeps the clip, so leave it
+    // Cancelled (the follow-up row or the status line folding away while it opens): the fold keeps the clip, so leave it
     part.animate([
       { height: "0px", marginTop: "0px", paddingTop: "0px", paddingBottom: "0px" },
       { height, marginTop, paddingTop, paddingBottom },
