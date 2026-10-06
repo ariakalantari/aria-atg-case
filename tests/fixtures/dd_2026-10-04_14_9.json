@@ -1,0 +1,398 @@
+{
+ "id": "dd_2026-10-04_14_9",
+ "status": "results",
+ "races": [
+  {
+   "id": "2026-10-04_14_9",
+   "number": 9,
+   "startTime": "2026-10-04T16:52:32",
+   "track": {
+    "name": "Eskilstuna"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Excellent Diamond"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3303
+      }
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Any Given Sunday"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 329
+      }
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Gratisfaction"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 471
+      }
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Listas Champagne"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1317
+      }
+     },
+     "result": {
+      "place": 7,
+      "finishOrder": 7
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Com Isidor"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 697
+      }
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Farlow Selva"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 350
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 10
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Scorpion Tile"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 8614
+      }
+     },
+     "result": {
+      "place": 8,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Diamant Sensation"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 6375
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Prop Line W."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1139
+      }
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Victory Vulcanus"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 0
+      }
+     },
+     "result": {
+      "finishOrder": 60
+     },
+     "scratched": true
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Mister Aloha"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 7979
+      }
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Sommarflörten"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 0
+      }
+     },
+     "result": {
+      "finishOrder": 62
+     },
+     "scratched": true
+    }
+   ]
+  },
+  {
+   "id": "2026-10-04_14_10",
+   "number": 10,
+   "startTime": "2026-10-04T17:17:52",
+   "track": {
+    "name": "Eskilstuna"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Honey Dun Girl"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 7659
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 7
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Pearl Kayz"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 532
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Oliver Transs R."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 348
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 11
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Jeppas Uppercut"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5197
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 12
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Interwall"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3396
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Miso Sisu"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 680
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "P.G.Persson"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3890
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Sandsjöns Cantona"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1996
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Henessi Humble"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1211
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Blyger S.R.P."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 831
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Mogas Ballerina"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 9761
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 10
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Don E.Star"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 487
+      },
+      "dd": {}
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    }
+   ]
+  }
+ ]
+}

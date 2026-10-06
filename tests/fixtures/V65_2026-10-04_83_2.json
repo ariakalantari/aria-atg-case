@@ -1,0 +1,1065 @@
+{
+ "id": "V65_2026-10-04_83_2",
+ "status": "results",
+ "races": [
+  {
+   "id": "2026-10-04_83_2",
+   "number": 2,
+   "startTime": "2026-10-04T18:21:21",
+   "track": {
+    "name": "Orkla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Millie Ø.K."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 285
+      },
+      "V65": {
+       "betDistribution": 719
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Bjørn"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2875
+      },
+      "V65": {
+       "betDistribution": 159
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Hansine S."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 946
+      },
+      "V65": {
+       "betDistribution": 1026
+      }
+     },
+     "result": {
+      "place": 2
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Pave Jerkeld"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 740
+      },
+      "V65": {
+       "betDistribution": 1442
+      }
+     },
+     "result": {
+      "place": 3
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Frier Karma"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 9466
+      },
+      "V65": {
+       "betDistribution": 50
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Høgly Gneis"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3527
+      },
+      "V65": {
+       "betDistribution": 212
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Nyheims Mirakles"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1037
+      },
+      "V65": {
+       "betDistribution": 1203
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Gangsters Pirat"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3411
+      },
+      "V65": {
+       "betDistribution": 363
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Skjetneylva"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 0
+      },
+      "V65": {
+       "betDistribution": 388
+      }
+     },
+     "result": {},
+     "scratched": true
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Voyle Prinsen"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 335
+      },
+      "V65": {
+       "betDistribution": 2629
+      }
+     },
+     "result": {
+      "place": 1
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Tynset Aksel"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 8563
+      },
+      "V65": {
+       "betDistribution": 91
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Nordstormen Ø.K."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2080
+      },
+      "V65": {
+       "betDistribution": 496
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 13,
+     "horse": {
+      "name": "Dronning Ness Tjo"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1220
+      },
+      "V65": {
+       "betDistribution": 1164
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 14,
+     "horse": {
+      "name": "Sparsom"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5032
+      },
+      "V65": {
+       "betDistribution": 59
+      }
+     },
+     "result": {}
+    }
+   ]
+  },
+  {
+   "id": "2026-10-04_83_3",
+   "number": 3,
+   "startTime": "2026-10-04T18:41:04",
+   "track": {
+    "name": "Orkla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Gaston Design"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5209
+      },
+      "V65": {
+       "betDistribution": 24
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Mystic Star"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1087
+      },
+      "V65": {
+       "betDistribution": 451
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Elton Rags"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1270
+      },
+      "V65": {
+       "betDistribution": 682
+      }
+     },
+     "result": {
+      "place": 3
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Flotating Device"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 4453
+      },
+      "V65": {
+       "betDistribution": 78
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Comedy"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 130
+      },
+      "V65": {
+       "betDistribution": 6736
+      }
+     },
+     "result": {
+      "place": 2
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Italy"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 900
+      },
+      "V65": {
+       "betDistribution": 1376
+      }
+     },
+     "result": {
+      "place": 1
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "A.K.s Liona"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2389
+      },
+      "V65": {
+       "betDistribution": 225
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Mayweather"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1019
+      },
+      "V65": {
+       "betDistribution": 273
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Carat"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 4618
+      },
+      "V65": {
+       "betDistribution": 156
+      }
+     },
+     "result": {}
+    }
+   ]
+  },
+  {
+   "id": "2026-10-04_83_4",
+   "number": 4,
+   "startTime": "2026-10-04T19:04:14",
+   "track": {
+    "name": "Orkla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Theorappen"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 0
+      },
+      "V65": {
+       "betDistribution": 324
+      }
+     },
+     "result": {},
+     "scratched": true
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Vertigo Mathias"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1432
+      },
+      "V65": {
+       "betDistribution": 637
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Norlilja"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 7446
+      },
+      "V65": {
+       "betDistribution": 99
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Kvikk Vinn"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 248
+      },
+      "V65": {
+       "betDistribution": 2583
+      }
+     },
+     "result": {
+      "place": 3
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Rofstad Lynet"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5961
+      },
+      "V65": {
+       "betDistribution": 61
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Will Jahn"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1095
+      },
+      "V65": {
+       "betDistribution": 1241
+      }
+     },
+     "result": {
+      "place": 1
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Skeie Theo"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 666
+      },
+      "V65": {
+       "betDistribution": 1270
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Eik Samida"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 812
+      },
+      "V65": {
+       "betDistribution": 887
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Astriks"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2889
+      },
+      "V65": {
+       "betDistribution": 415
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Lesja Loke"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 299
+      },
+      "V65": {
+       "betDistribution": 2409
+      }
+     },
+     "result": {
+      "place": 2
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Maiken"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 6571
+      },
+      "V65": {
+       "betDistribution": 74
+      }
+     },
+     "result": {}
+    }
+   ]
+  },
+  {
+   "id": "2026-10-04_83_5",
+   "number": 5,
+   "startTime": "2026-10-04T19:24:27",
+   "track": {
+    "name": "Orkla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Fiery Hill"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5188
+      },
+      "V65": {
+       "betDistribution": 55
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Wild One"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5495
+      },
+      "V65": {
+       "betDistribution": 44
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Royal Act"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 825
+      },
+      "V65": {
+       "betDistribution": 1001
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "M.H. Pocahontas"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 324
+      },
+      "V65": {
+       "betDistribution": 1983
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Nappa Hall"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 817
+      },
+      "V65": {
+       "betDistribution": 1185
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Kvåles Corona"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 444
+      },
+      "V65": {
+       "betDistribution": 2685
+      }
+     },
+     "result": {
+      "place": 1
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "If"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 878
+      },
+      "V65": {
+       "betDistribution": 525
+      }
+     },
+     "result": {
+      "place": 3
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Panson Rags"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2985
+      },
+      "V65": {
+       "betDistribution": 152
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Nero B.R."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 346
+      },
+      "V65": {
+       "betDistribution": 2370
+      }
+     },
+     "result": {
+      "place": 2
+     }
+    }
+   ]
+  },
+  {
+   "id": "2026-10-04_83_6",
+   "number": 6,
+   "startTime": "2026-10-04T19:44:04",
+   "track": {
+    "name": "Orkla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Tom The Brady"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 169
+      },
+      "V65": {
+       "betDistribution": 6028
+      }
+     },
+     "result": {
+      "place": 3
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Smashing You"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3143
+      },
+      "V65": {
+       "betDistribution": 65
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Kvåles Tobin"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 0
+      },
+      "V65": {
+       "betDistribution": 12
+      }
+     },
+     "result": {},
+     "scratched": true
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Loaded Noah"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 4995
+      },
+      "V65": {
+       "betDistribution": 24
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Moni Debbi"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 316
+      },
+      "V65": {
+       "betDistribution": 2701
+      }
+     },
+     "result": {
+      "place": 2
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Maharani Force"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 7280
+      },
+      "V65": {
+       "betDistribution": 38
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Lazy Lane"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 601
+      },
+      "V65": {
+       "betDistribution": 754
+      }
+     },
+     "result": {
+      "place": 1
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Jerry B.R."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1172
+      },
+      "V65": {
+       "betDistribution": 311
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Watch Me Defeatyou"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3909
+      },
+      "V65": {
+       "betDistribution": 65
+      }
+     },
+     "result": {}
+    }
+   ]
+  },
+  {
+   "id": "2026-10-04_83_7",
+   "number": 7,
+   "startTime": "2026-10-04T20:03:12",
+   "track": {
+    "name": "Orkla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Nordic Bay"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5098
+      },
+      "V65": {
+       "betDistribution": 108
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Welldone Jackie"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3780
+      },
+      "V65": {
+       "betDistribution": 72
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Elysian Face"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 177
+      },
+      "V65": {
+       "betDistribution": 4446
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Zavannah Of Thrones"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 6506
+      },
+      "V65": {
+       "betDistribution": 66
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Kandyman"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1365
+      },
+      "V65": {
+       "betDistribution": 432
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Golden Rags"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 404
+      },
+      "V65": {
+       "betDistribution": 1786
+      }
+     },
+     "result": {
+      "place": 2
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Livin Velocity"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3044
+      },
+      "V65": {
+       "betDistribution": 203
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Global Finance"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 735
+      },
+      "V65": {
+       "betDistribution": 1600
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Marquise"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3730
+      },
+      "V65": {
+       "betDistribution": 73
+      }
+     },
+     "result": {
+      "place": 3
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Lester Green"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1173
+      },
+      "V65": {
+       "betDistribution": 1154
+      }
+     },
+     "result": {
+      "place": 1
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Ebony And Ivory"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 9549
+      },
+      "V65": {
+       "betDistribution": 22
+      }
+     },
+     "result": {}
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Kayo M.E."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 8184
+      },
+      "V65": {
+       "betDistribution": 40
+      }
+     },
+     "result": {}
+    }
+   ]
+  }
+ ]
+}

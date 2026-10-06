@@ -1,0 +1,8 @@
+.git
+.venv
+cache
+tests
+journey.md
+__pycache__
+*.pyc
+.pytest_cache

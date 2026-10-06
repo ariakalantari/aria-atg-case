@@ -1,0 +1,1001 @@
+/* Colors, sizes, shapes and motion measured from atg.se, so the page feels native to ATG. */
+
+:root {
+  --brand: #006DB6;
+  --brand-dark: #004F9F;
+  --canvas: #F5F7FA;
+  --card: #FFFFFF;
+  --heading: #2A3E50;
+  --text: rgba(0, 0, 0, 0.87);
+  --muted: rgba(0, 0, 0, 0.6);
+  --soft: #566473;
+  --label: #7F8B95;
+  --line: rgba(0, 0, 0, 0.08);
+  --link: #097AC8;
+  --sky: #35A1E9;
+  --good: #00A33F;
+  --loss: #C00A26;
+  --yellow: #FFDD00;
+  --chip: #ECECED;
+
+  --radius: 8px;
+  --shadow: 0 1px 6px rgba(0, 0, 0, 0.03), 0 8px 40px rgba(0, 0, 0, 0.06);
+  --shadow-raised: 0 3px 8px rgba(0, 0, 0, 0.08), 0 12px 24px rgba(0, 0, 0, 0.15);
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --display: "Exo 2", "Arial Black", sans-serif; /* stands in for ATG's own font */
+  --body: Roboto, system-ui, "Segoe UI", sans-serif;
+  --topbar: 72px;
+
+  /* Game colors, switched by data-game (like ATG's active-game-type classes) */
+  --game: #004F9F;
+  --game-from: #006DB6;
+  --game-to: #1C3885;
+}
+
+[data-game="V85"] { --game: #004F9F; --game-from: #006DB6; --game-to: #1C3885; }
+[data-game="V86"] { --game: #802C7E; --game-from: #9E4A9C; --game-to: #711A6F; }
+[data-game="V64"] { --game: #EA6206; --game-from: #F98314; --game-to: #DB4E00; }
+[data-game="V65"] { --game: #C00A26; --game-from: #D43140; --game-to: #A90821; }
+[data-game="GS75"] { --game: #15614E; --game-from: #00815C; --game-to: #1D4B43; }
+[data-game="V5"], [data-game="V4"], [data-game="V3"], [data-game="dd"], [data-game="ld"] {
+  --game: #449FDC; --game-from: #4FB1EE; --game-to: #2E84C6;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--text);
+  font: 14px/1.5 var(--body);
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3, h4, h5, p { margin: 0; }
+h1, h2, h3 { color: var(--heading); }
+
+/* ATG's focus ring: a white gap, then sky blue */
+button:focus-visible, summary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1.5px #fff, 0 0 0 3px var(--sky);
+  transition: box-shadow 0.15s ease;
+}
+
+.icon { flex: none; width: 20px; height: 20px; }
+
+/* Loading placeholders in the shape of the real content */
+.skeleton {
+  display: inline-block;
+  width: 4.5em;
+  height: 0.9em;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.11);
+  vertical-align: middle;
+  animation: skeleton 2s ease-in-out 0.5s infinite;
+}
+
+/* ---------- top bar ---------- */
+
+/* Sticky, so the Harry AI sidebar can always use exactly the space below it */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #004F9F linear-gradient(90deg, rgba(22, 43, 105, 0.4) 0%, #006DB6 100%);
+  color: #fff;
+}
+
+.topbar-inner {
+  position: relative;
+  max-width: 1280px;
+  height: var(--topbar);
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Centered, like ATG's logo */
+.wordmark {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--yellow);
+  font: italic 800 26px/1 var(--display);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
+
+/* Language switch: two round flags on a soft track, the chosen one ringed in white */
+.lang-switch { display: flex; gap: 4px; padding: 3px; border-radius: 9999px; background: rgba(255, 255, 255, 0.15); }
+
+.lang-switch button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.lang-switch button:hover { opacity: 0.85; }
+.lang-switch button[aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 2px #fff; }
+.flag-icon { display: block; width: 26px; height: 26px; border-radius: 50%; }
+
+/* ATG's toolbar button (like "Fråga AI"): white, radius 8, link blue text */
+.harry-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 4px 12px 4px 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--link);
+  font: 500 14px var(--body);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+}
+
+.harry-toggle:hover { background: #F5F9FD; }
+.harry-toggle .orb { width: 20px; height: 20px; }
+.harry-toggle .name { color: var(--text); font: italic 800 16px/1 var(--display); text-transform: uppercase; }
+
+.beta {
+  display: inline-grid;
+  place-items: center;
+  height: 14px;
+  padding: 0 4px;
+  border-radius: 2.6px;
+  background: var(--yellow);
+  color: var(--heading);
+  font: 700 9px/1 var(--body);
+  letter-spacing: 0.14px;
+  text-transform: uppercase;
+}
+
+/* The assistant's face: a blue orb, like the one on ATG's "Fråga AI" button */
+.orb {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #D6F0FF 0, #35A1E9 30%, #006DB6 62%, #1C3885 100%);
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.orb.big { width: 48px; height: 48px; }
+
+/* ---------- page layout ---------- */
+
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); /* lets wide children scroll instead of stretching the page */
+  gap: 24px;
+}
+
+.card {
+  padding: 20px 24px;
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+/* ATG's centered card header: outline icon, title, grey subtitle */
+.card-head { text-align: center; }
+.head-icon { width: 40px; height: 40px; color: var(--heading); }
+.card-head h2 { margin-top: 6px; font-size: 20px; line-height: 26px; }
+.card-head p { max-width: 560px; margin: 4px auto 16px; color: var(--soft); font-size: 14px; line-height: 22px; }
+
+/* Statement card, like ATG's USP cards */
+.intro { padding: 40px 32px 32px; text-align: center; }
+.intro h1 { max-width: 760px; margin: 0 auto; font: italic 800 32px/36px var(--display); text-transform: uppercase; }
+.intro p { max-width: 560px; margin: 12px auto 0; color: var(--soft); font-size: 16px; line-height: 22px; }
+
+.usps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 32px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.usps li { display: flex; align-items: center; gap: 8px; color: var(--heading); font-size: 18px; font-weight: 700; }
+.usps .icon { width: 18px; height: 18px; color: var(--good); }
+
+/* ---------- game type pills ---------- */
+
+.game-types { display: flex; gap: 12px; overflow-x: auto; padding: 4px; }
+
+.game-type {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 9999px;
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  outline-offset: -1px;
+  background: transparent;
+  color: var(--heading);
+  font: 500 14px var(--body);
+  cursor: pointer;
+  transition: outline-color 0.1s var(--ease), color 0.1s var(--ease);
+}
+
+.game-type::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--game); }
+.game-type small { color: var(--soft); font-size: 12px; }
+.game-type:hover { outline-color: rgba(0, 0, 0, 0.16); }
+.game-type.active { outline-color: var(--sky); color: var(--link); }
+
+/* ---------- game banner ---------- */
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 40px;
+  min-height: 112px;
+  padding: 24px 32px 24px 40px;
+  border-radius: var(--radius);
+  background: linear-gradient(-45deg, var(--game-to) 0%, var(--game-from) 100%);
+  box-shadow: var(--shadow-raised);
+  color: #fff;
+}
+
+.banner-title { display: grid; color: #fff; font: italic 800 48px/1 var(--display); text-transform: uppercase; }
+.banner-title small { font: 500 13px/1.6 var(--body); text-transform: none; opacity: 0.85; }
+
+.banner-facts { display: flex; margin: 0; }
+.banner-facts div { padding: 0 24px; border-left: 1px solid rgba(255, 255, 255, 0.3); }
+.banner-facts dt { color: rgba(255, 255, 255, 0.8); font-size: 12px; font-weight: 500; }
+.banner-facts dd { margin: 0; font-size: 16px; font-weight: 700; }
+.banner .skeleton { width: 2em; background: rgba(255, 255, 255, 0.3); }
+
+.progress { margin-left: auto; display: flex; align-items: center; gap: 10px; font-weight: 500; }
+
+.progress::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--yellow);
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+.message {
+  padding: 16px 24px;
+  border-left: 4px solid var(--loss);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--heading);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* ---------- Harry's answers to the four questions ---------- */
+
+.answers { padding: 0; overflow: hidden; }
+.answers-head { display: flex; align-items: center; gap: 14px; padding: 20px 24px 16px; }
+.answers-head .orb { width: 36px; height: 36px; }
+.answers-head h2 { font-size: 20px; line-height: 26px; }
+.answers-head p { color: var(--soft); font-size: 14px; }
+
+.answer-list { margin: 0; padding: 0; list-style: none; counter-reset: question; }
+
+.answer-list li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) minmax(0, 1.1fr) 200px;
+  align-items: center;
+  gap: 16px;
+  min-height: 72px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--line);
+  counter-increment: question;
+}
+
+/* The brief's own numbering, in ATG's round number badge */
+.answer-list li::before {
+  content: counter(question);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(158, 174, 189, 0.2);
+  color: var(--heading);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.answer-list .q { color: var(--heading); font-size: 15px; font-weight: 500; }
+.answer-list .a { display: grid; gap: 2px; }
+
+/* Big figures in the display face, like ATG's prize pot figures. Natural case, so "2:a" reads right. */
+.answer-list .a strong { color: var(--heading); font: italic 800 26px/30px var(--display); }
+.answer-list .a small { color: var(--soft); font-size: 13px; }
+.answer-list .a a { color: var(--link); font-weight: 500; text-decoration: none; }
+.answer-list .a a:hover { text-decoration: underline; }
+
+.answer-list .check { display: flex; align-items: center; gap: 6px; color: var(--soft); font-size: 13px; font-weight: 500; }
+.answer-list .check .icon { width: 18px; height: 18px; }
+.answer-list .check.ok { color: var(--good); }
+.answer-list .check.bad { color: var(--loss); }
+
+/* ---------- where the favourites finished ---------- */
+
+.finishes-wrap { position: relative; overflow-x: auto; }
+.finishes { display: grid; grid-template-columns: repeat(var(--columns, 4), minmax(44px, 1fr)); }
+.column { display: grid; grid-template-rows: 1fr auto; border-bottom: 2px solid var(--heading); }
+.column + .column { border-left: 1px solid var(--line); }
+.column.win { background: rgba(0, 163, 63, 0.07); }
+
+.dots {
+  position: relative;
+  z-index: 1; /* flags sit on top of the median line */
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-content: flex-start;
+  justify-content: center;
+  gap: 4px;
+  min-height: 150px;
+  padding: 10px 4px;
+}
+
+/* Each dot is a small leg flag with ATG's slanted edge */
+.dot {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 22px;
+  padding-right: 4px;
+  background: var(--game);
+  color: #fff;
+  font: italic 800 12px var(--display);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+.dot.off { background: var(--loss); }
+.dot.new { animation: drop 0.3s var(--ease); }
+
+.column .label {
+  padding: 6px 0;
+  color: var(--label);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.column.win .label { color: var(--good); }
+
+.median-marker {
+  position: absolute;
+  top: 0;
+  bottom: 28px;
+  left: calc(var(--at) * 100%);
+  border-left: 2px dashed var(--heading);
+  pointer-events: none;
+}
+
+.median-marker span {
+  position: absolute;
+  top: 0;
+  left: 6px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: var(--heading);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ---------- games, styled like ATG's results blocks ---------- */
+
+.games { display: grid; gap: 24px; }
+.game-skeleton { display: block; width: auto; height: 280px; border-radius: var(--radius); }
+
+.game { overflow: hidden; border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow); }
+
+.game-head { display: flex; align-items: center; gap: 16px; min-height: 48px; padding-right: 20px; background: var(--game); color: #fff; }
+
+.game-head h3 {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 40px 0 20px;
+  background: var(--game-to);
+  color: #fff;
+  font: italic 800 22px var(--display);
+  text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 20px) 100%, 0 100%);
+}
+
+.game-head .meta { font-weight: 500; }
+.game-head .score { margin-left: auto; font-weight: 700; }
+
+.leg-header, .leg > summary {
+  display: grid;
+  grid-template-columns: 56px 1fr 120px 48px 24px;
+  grid-template-areas: "flag picks result check chevron";
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+/* ATG's newer table headers: small grey caps, no tint */
+.leg-header {
+  height: 32px;
+  border-bottom: 1px solid var(--line);
+  color: var(--label);
+  font: 700 10px/14px var(--body);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.leg { border-bottom: 1px solid var(--line); }
+.leg:last-child { border-bottom: 0; }
+
+/* Rows do not tint on hover at ATG, they only show the pointer */
+.leg > summary { min-height: 64px; padding-top: 10px; padding-bottom: 10px; cursor: pointer; list-style: none; }
+.leg > summary::-webkit-details-marker { display: none; }
+.leg.wrong > summary { box-shadow: inset 4px 0 var(--loss); }
+
+.leg > summary > .icon-chevron { grid-area: chevron; color: var(--soft); transition: transform 0.2s var(--ease); }
+.leg[open] > summary > .icon-chevron { transform: rotate(180deg); }
+
+.leg-flag {
+  grid-area: flag;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 28px;
+  padding-right: 6px;
+  background: var(--game);
+  color: #fff;
+  font: italic 800 16px var(--display);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+
+.picks { grid-area: picks; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0; padding: 0; list-style: none; }
+.pick { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+.number {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(0, 109, 182, 0.5);
+  border-radius: 4px;
+  background: rgba(0, 109, 182, 0.04);
+  color: var(--brand);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.pick-text { display: grid; min-width: 0; }
+.pick .name { overflow: hidden; color: var(--text); font-size: 16px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.pick.first .name { font-weight: 700; }
+.pick .odds { color: var(--muted); }
+.pick .odds small, .data-card small { font-size: 0.85em; }
+
+.result { grid-area: result; color: var(--heading); font-size: 15px; font-weight: 500; }
+.result.dq { color: var(--loss); font-weight: 700; }
+.result.outside { color: var(--muted); font-size: 13px; }
+
+/* A placement flag in the game color, like ATG's "1:a" flags */
+.result.won, .won-flag {
+  justify-self: start;
+  padding: 2px 16px 2px 8px;
+  background: var(--game);
+  color: #fff;
+  font-weight: 500;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+
+.verdict { grid-area: check; justify-self: center; display: grid; }
+.verdict .icon { width: 24px; height: 24px; }
+.leg.right .verdict { color: var(--good); }
+.leg.wrong .verdict { color: var(--loss); }
+
+/* "What Harry saw": ATG's expanded row, a light blue panel under the row */
+.leg-detail {
+  display: grid;
+  gap: 14px;
+  padding: 16px 24px 20px 88px;
+  background: #F5F8FB;
+  box-shadow: inset 0 8px 8px -8px rgba(0, 0, 0, 0.12);
+}
+
+.detail-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.detail-head h4 { color: var(--heading); font-size: 16px; font-weight: 500; }
+
+/* Same white toolbar button as "Harry AI" in the top bar */
+.ask-harry {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 12px 0 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--link);
+  font: 500 14px var(--body);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+}
+
+.ask-harry:hover { background: #F5F9FD; }
+.ask-harry .orb { width: 18px; height: 18px; }
+
+.steps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+
+.step-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.step-head { display: flex; align-items: center; gap: 10px; }
+.step-head strong { display: block; color: var(--heading); font-size: 15px; }
+.step-head small { display: block; color: var(--soft); font-size: 12px; }
+
+.step-letter {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(158, 174, 189, 0.2);
+  color: var(--heading);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* The question Harry was asked, shaped like a chat message */
+.task {
+  justify-self: start;
+  padding: 8px 14px;
+  border-radius: 14px 14px 14px 4px;
+  background: var(--chip);
+  color: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.board-scroll { overflow-x: auto; }
+.board { width: 100%; border-collapse: collapse; font-size: 13px; }
+.board th { padding: 4px 8px; color: var(--label); font: 700 10px/14px var(--body); letter-spacing: 0.4px; text-align: left; text-transform: uppercase; }
+.board td { padding: 5px 8px; border-top: 1px solid var(--line); color: var(--text); }
+.board .num { text-align: right; }
+.board .rank { width: 48px; color: var(--soft); font: italic 800 13px var(--display); }
+.board tr.picked td { background: rgba(200, 228, 249, 0.4); color: var(--heading); font-weight: 700; }
+
+.harry-said { display: flex; align-items: center; gap: 8px; color: var(--heading); font-size: 14px; }
+.harry-said .orb { width: 18px; height: 18px; }
+.harry-said > span:nth-child(2) { flex: 1; }
+.harry-said .ok, .harry-said .bad { display: inline-flex; }
+.harry-said .icon { width: 20px; height: 20px; }
+.harry-said .ok { color: var(--good); }
+.harry-said .bad { color: var(--loss); }
+
+/* The exact prompt, for anyone who wants to see the raw text */
+.raw summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--link);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+
+.raw summary::-webkit-details-marker { display: none; }
+.raw summary .icon { width: 16px; height: 16px; transform: rotate(-90deg); transition: transform 0.2s var(--ease); }
+.raw[open] summary .icon { transform: none; }
+
+.raw pre {
+  margin: 8px 0 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--canvas);
+  color: var(--heading);
+  font: 12px/1.6 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  white-space: pre-wrap;
+}
+
+.correction {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  background: rgba(192, 10, 38, 0.06);
+  color: var(--loss);
+}
+
+.correction .icon { width: 18px; height: 18px; margin-top: 1px; }
+.timing { color: var(--soft); font-size: 13px; }
+
+/* ---------- how it works ---------- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li { color: var(--soft); counter-increment: step; }
+.steps strong { display: block; margin-bottom: 4px; color: var(--heading); font-size: 16px; }
+.steps strong::before { content: counter(step); margin-right: 8px; color: var(--brand); font: italic 800 18px var(--display); }
+
+/* ---------- Harry AI, styled after ATG's own assistant panel ---------- */
+
+.assistant { display: flex; flex-direction: column; background: #fff; }
+
+/* White 48px header: "Start over" left, name centered, close right */
+.assistant-head {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  height: 48px;
+  padding: 0 8px 0 16px;
+}
+
+.text-button {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--link);
+  font: 500 14px var(--body);
+  cursor: pointer;
+}
+
+.text-button .icon { width: 18px; height: 18px; }
+.text-button:hover { color: #0974BF; text-decoration: underline; }
+
+.harry-mark { display: flex; align-items: center; gap: 6px; color: var(--text); font: italic 800 20px/1 var(--display); text-transform: uppercase; }
+
+.icon-button {
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--soft);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+}
+
+.icon-button:hover { background: rgba(200, 228, 249, 0.28); }
+
+.model-notice { padding: 10px 16px; background: #FFF8CC; color: var(--heading); font-size: 13px; }
+
+.messages { flex: 1; overflow-y: auto; display: grid; align-content: start; gap: 20px; padding: 16px 20px; }
+.messages:has(.hero) { align-content: center; }
+
+/* The empty state: orb, name and one line, centered */
+.hero { display: grid; justify-items: center; gap: 12px; text-align: center; }
+.hero-mark { display: flex; align-items: center; gap: 10px; color: var(--text); font: italic 800 44px/1 var(--display); text-transform: uppercase; }
+.hero p { max-width: 300px; color: var(--text); font-size: 18px; font-weight: 500; line-height: 24px; }
+
+.msg.user {
+  justify-self: end;
+  max-width: 85%;
+  padding: 8px 16px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--chip);
+  color: var(--heading);
+  font-size: 15px;
+  font-weight: 500; /* same weight as the chips, so a chip can morph into it without a jump */
+  line-height: 22px;
+  letter-spacing: 0.2px;
+  overflow-wrap: anywhere;
+}
+
+/* Answers are plain text next to the orb, no bubble */
+.msg.ai { display: flex; align-items: flex-start; gap: 10px; }
+.msg.ai > .orb { margin-top: 1px; }
+.msg-body { flex: 1; min-width: 0; display: grid; gap: 10px; }
+
+.ai-text { color: var(--text); font-size: 16px; line-height: 22px; overflow-wrap: anywhere; }
+.ai-text p + p, .ai-text p + ul, .ai-text ul + p { margin-top: 10px; }
+.ai-text ul { margin: 0; padding-left: 20px; }
+.ai-text li + li { margin-top: 6px; }
+.ai-text code { padding: 1px 4px; border-radius: 4px; background: var(--canvas); font-size: 14px; }
+.ai-text.error { color: var(--loss); }
+
+/* Streaming: each new word fades in from a blur (chat.js wraps new words in .fade) */
+.fade { display: inline-block; animation: fade-in 0.6s ease-out both; }
+
+/* Status line before the answer, in link blue with moving dots */
+.thinking { color: var(--link); font-size: 16px; line-height: 22px; }
+.thinking::after { content: "..."; display: inline-block; width: 0; overflow: hidden; vertical-align: bottom; animation: dots 1.2s steps(4) infinite; }
+
+.note { color: var(--label); font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
+.tool-step { justify-self: start; display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-size: 12px; font-weight: 500; }
+.tool-step .icon { width: 16px; height: 16px; color: var(--good); }
+.tool-step, .data-card, .note { animation: rise 0.2s var(--ease) both; }
+
+/* Suggestion chips docked above the input, like ATG's assistant */
+.suggestions { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 16px 4px; }
+
+.suggestion {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 32px;
+  background: var(--chip);
+  color: var(--heading);
+  font: 500 14px/20px var(--body);
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.suggestion:hover { background: #D9D9D9; }
+
+/* A picked suggestion while it flies into place as the question */
+.suggestion.ghost { position: fixed; z-index: 40; margin: 0; overflow: hidden; pointer-events: none; }
+
+/* One input box with a round send button inside */
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 16px 6px;
+  padding: 8px 8px 8px 16px;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
+  background: #fff;
+  transition: border-color 0.15s var(--ease);
+}
+
+.composer:focus-within { border-color: var(--brand); }
+
+.composer input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font: 15px/22px var(--body);
+}
+
+.composer input::placeholder { color: #757575; }
+
+.composer button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--chip);
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+}
+
+.composer button .icon { width: 18px; height: 18px; }
+.composer button:disabled { color: rgba(0, 0, 0, 0.3); cursor: default; }
+.composer button.stop { background: var(--heading); color: #fff; }
+
+.disclaimer {
+  margin: 0 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Tool results: white cards with a game color stripe, like ATG's small cards */
+/* A plain white card, and the title led by ATG's small game tag (the colored "V85" chip) */
+.data-card { margin: 0; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: var(--radius); background: #fff; }
+.data-card figcaption { display: flex; align-items: center; gap: 8px; padding: 12px 12px 8px; color: var(--heading); font-size: 14px; font-weight: 700; }
+
+.mini-tiles { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
+.mini-tiles div { display: grid; padding: 8px 12px; }
+.mini-tiles div + div { border-left: 1px solid var(--line); }
+.mini-tiles span { color: var(--label); font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
+.mini-tiles strong { color: var(--heading); font: italic 800 20px/24px var(--display); text-transform: uppercase; }
+
+.table-scroll { overflow-x: auto; }
+.data-card table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+.data-card th {
+  padding: 6px 10px;
+  border-top: 1px solid var(--line);
+  color: var(--label);
+  font: 700 10px/14px var(--body);
+  letter-spacing: 0.4px;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.data-card td { padding: 7px 10px; border-top: 1px solid var(--line); white-space: nowrap; }
+.data-card .odds, .data-card .percent { text-align: right; }
+.data-card td.runner .name { font-weight: 500; }
+.data-card .track { color: var(--muted); }
+.data-card .dq { color: var(--loss); font-weight: 700; }
+
+.data-card .number { display: inline-grid; width: 22px; height: 22px; margin-right: 6px; font-size: 12px; vertical-align: middle; }
+
+.data-card .leg-flag {
+  display: inline-grid;
+  width: 26px;
+  height: 20px;
+  margin-right: 6px;
+  padding-right: 4px;
+  font-size: 12px;
+  vertical-align: middle;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+
+.data-card .won-flag { display: inline-block; padding: 1px 12px 1px 6px; clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
+
+.game-tag {
+  display: inline-block;
+  min-width: 40px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: var(--game);
+  color: #fff;
+  font: italic 800 11px var(--display);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Wide screens: the sidebar is pinned under the top bar and the page makes room for it */
+@media (min-width: 1200px) {
+  .assistant {
+    position: fixed;
+    top: var(--topbar);
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    width: 420px;
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+  }
+  body.chat-open .layout, body.chat-open .footer { margin-right: 420px; }
+  body:not(.chat-open) .assistant { display: none; }
+}
+
+/* Narrow screens: a drawer over the page, with ATG's drawer timing and a dark backdrop */
+@media (max-width: 1199px) {
+  .assistant {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    width: min(440px, 100%);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+    transform: translateX(105%);
+    transition: transform 0.225s cubic-bezier(0, 0, 0.2, 1);
+  }
+  body.chat-open .assistant { transform: none; }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.225s;
+  }
+  body.chat-open::after { opacity: 1; pointer-events: auto; }
+}
+
+/* ---------- footer ---------- */
+
+.footer { margin-top: 24px; background: linear-gradient(90deg, #215EA6, #1B3A87); color: rgba(255, 255, 255, 0.85); font-size: 13px; }
+.footer-inner { max-width: 1280px; margin: 0 auto; padding: 24px; display: grid; gap: 6px; }
+
+/* ---------- motion ---------- */
+
+@keyframes drop { from { transform: translateY(-14px); opacity: 0; } }
+@keyframes pulse { to { opacity: 0.3; } }
+@keyframes fade-in { from { opacity: 0; filter: blur(6px); } }
+@keyframes rise { from { opacity: 0; transform: translateY(4px); } }
+@keyframes dots { to { width: 1.2em; } }
+@keyframes skeleton { 50% { opacity: 0.4; } }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 899px) {
+  :root { --topbar: 60px; }
+  .topbar-inner, .page { padding-left: 16px; padding-right: 16px; }
+  .topbar-inner { justify-content: space-between; }
+  .wordmark { position: static; transform: none; font-size: 20px; }
+  .page { gap: 16px; padding-top: 16px; }
+  .card { padding: 16px; }
+
+  .intro { padding: 28px 16px 24px; }
+  .intro h1 { font-size: 24px; line-height: 28px; }
+  .usps li { font-size: 15px; }
+
+  .banner { padding: 20px; gap: 12px 24px; }
+  .banner-title { font-size: 36px; }
+  .banner-facts div:first-child { padding-left: 0; border-left: 0; }
+  .progress { margin-left: 0; }
+
+  .answers-head { padding: 16px; }
+  .answer-list li {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 4px 12px;
+    padding: 14px 16px;
+  }
+  .answer-list li::before { grid-row: span 3; align-self: start; }
+  .answer-list .a strong { font-size: 22px; line-height: 26px; }
+
+  .leg-header { display: none; }
+  .leg > summary {
+    grid-template-columns: 44px 1fr auto 24px;
+    grid-template-areas: "flag result check chevron" "picks picks picks picks";
+    gap: 10px;
+  }
+  .picks { grid-template-columns: 1fr; gap: 8px; }
+  .leg-detail { padding: 16px; }
+  .steps-grid { grid-template-columns: 1fr; }
+
+  .steps { grid-template-columns: 1fr; gap: 12px; }
+}
+
+@media (max-width: 599px) {
+  .wordmark { font-size: 17px; }
+  .topbar-actions { gap: 8px; }
+  .harry-toggle .beta { display: none; }
+  .lang-switch button { padding: 0 8px; }
+}

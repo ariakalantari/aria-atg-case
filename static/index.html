@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aria ATG Case</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,800&family=Roboto:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-game="V85">
+  <!-- One small outline icon set (1.5px strokes, like ATG's), used with <svg><use href="#i-name"></svg> -->
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/>
+        <path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-cross" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/>
+        <path d="M9 9l6 6M15 9l-6 6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-restart" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/></symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4m0 0h12l-2.5 4.5L17 13H5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-steps" viewBox="0 0 24 24"><path d="M4 6h3M4 12h3M4 18h3M10 6h10M10 12h10M10 18h10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <span class="wordmark">Aria ATG Case</span>
+      <div class="topbar-actions">
+        <!-- Round flags, the way atg.se shows flags on its track chips -->
+        <div class="lang-switch" role="group" aria-label="Language" data-i18n-label="Language">
+          <button type="button" data-lang="sv" lang="sv" aria-label="Svenska" title="Svenska">
+            <svg class="flag-icon" viewBox="0 0 16 10" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="16" height="10" fill="#006AA7"/><rect x="5" width="2" height="10" fill="#FECC02"/><rect y="4" width="16" height="2" fill="#FECC02"/>
+            </svg>
+          </button>
+          <button type="button" data-lang="en" lang="en" aria-label="English" title="English">
+            <svg class="flag-icon" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <clipPath id="uk-diagonals"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+              <rect width="60" height="30" fill="#012169"/>
+              <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+              <path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#uk-diagonals)" stroke="#C8102E" stroke-width="4"/>
+              <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+              <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+            </svg>
+          </button>
+        </div>
+        <button class="harry-toggle" id="harry-toggle" type="button" aria-controls="assistant" aria-expanded="false">
+          <span class="orb" aria-hidden="true"></span><span class="name">Harry AI</span><span class="beta">Beta</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+  <main class="page">
+    <section class="card intro">
+      <h1 data-i18n>How good are our customers at picking the winner?</h1>
+      <p data-i18n>Pick a game type. Harry AI, a small AI model on this computer, answers every leg of its three latest games, and plain code checks every answer.</p>
+      <ul class="usps">
+        <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n>The 3 latest games</span></li>
+        <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n>Every answer checked</span></li>
+        <li><svg class="icon"><use href="#i-check"/></svg><span data-i18n>Runs on this computer</span></li>
+      </ul>
+    </section>
+
+    <nav class="game-types" id="game-types" aria-label="Game type" data-i18n-label="Game type"></nav>
+
+    <section class="banner" id="report">
+      <h2 class="banner-title"><span id="title-type">V85</span><small id="title-name"></small></h2>
+      <dl class="banner-facts">
+        <div><dt data-i18n>Games</dt><dd id="fact-games"></dd></div>
+        <div><dt data-i18n>Legs</dt><dd id="fact-legs"></dd></div>
+        <div><dt data-i18n>Answered by</dt><dd>Harry AI • <span id="model-name">Qwen 3.5 2B</span></dd></div>
+      </dl>
+      <p class="progress" id="progress" aria-live="polite"></p>
+    </section>
+
+    <p class="message" id="message" role="alert" hidden></p>
+
+    <!-- The brief's four questions, answered by Harry and checked by code -->
+    <section class="card answers">
+      <header class="answers-head">
+        <span class="orb" aria-hidden="true"></span>
+        <div>
+          <h2 data-i18n>Harry's answers to the four questions</h2>
+          <p id="answers-score"></p>
+        </div>
+      </header>
+      <ol class="answer-list">
+        <li id="answer-favourites"><span class="q" data-i18n>The three favourites in each leg, with name and V-odds</span><span class="a"></span><span class="check"></span></li>
+        <li id="answer-won"><span class="q" data-i18n>Whether the favourite won</span><span class="a"></span><span class="check"></span></li>
+        <li id="answer-median"><span class="q" data-i18n>The favourite's median finishing position</span><span class="a"></span><span class="check"></span></li>
+        <li id="answer-rate"><span class="q" data-i18n>How often the favourite wins</span><span class="a"></span><span class="check"></span></li>
+      </ol>
+    </section>
+
+    <section class="card finishes-card">
+      <header class="card-head">
+        <svg class="head-icon"><use href="#i-flag"/></svg>
+        <h2 data-i18n>Where the favourites finished</h2>
+        <p data-i18n>One flag per leg, placed at the favourite's finishing position. The number on the flag is the leg.</p>
+      </header>
+      <div class="finishes-wrap">
+        <div class="finishes" id="finishes"></div>
+        <div class="median-marker" id="median-marker" hidden><span></span></div>
+      </div>
+    </section>
+
+    <section class="games" id="games"></section>
+
+    <section class="card how">
+      <header class="card-head">
+        <svg class="head-icon"><use href="#i-steps"/></svg>
+        <h2 data-i18n>How it works</h2>
+        <p data-i18n>Five steps, and Harry only ever answers small questions.</p>
+      </header>
+      <ol class="steps">
+        <li><strong data-i18n>Fetch</strong><span data-i18n>The three most recent finished games from ATG's racing API.</span></li>
+        <li><strong data-i18n>Clean</strong><span data-i18n>Drop scratched horses, flag disqualified ones and sort each leg by V-odds.</span></li>
+        <li><strong data-i18n>Ask</strong><span data-i18n>Harry first sees only the odds and names the favourites. Then it sees only the result and says where the favourite finished.</span></li>
+        <li><strong data-i18n>Verify</strong><span data-i18n>Code works out the same answers from the raw data and marks each one.</span></li>
+        <li><strong data-i18n>Count</strong><span data-i18n>Code counts the win rate and median from Harry's own answers.</span></li>
+      </ol>
+    </section>
+  </main>
+
+  <aside class="assistant" id="assistant" aria-label="Harry AI">
+    <header class="assistant-head">
+      <button class="text-button" id="chat-new" type="button"><svg class="icon"><use href="#i-restart"/></svg><span data-i18n>New chat</span></button>
+      <h2 class="harry-mark">Harry AI <span class="beta">Beta</span></h2>
+      <button class="icon-button" id="chat-close" type="button" aria-label="Close Harry AI" data-i18n-label="Close Harry AI"><svg class="icon"><use href="#i-close"/></svg></button>
+    </header>
+    <p class="model-notice" id="model-notice" data-i18n hidden>Harry is starting up. The very first start downloads the model (about 1.3 GB), so give it a few minutes.</p>
+    <div class="messages" id="chat-messages" aria-live="polite"></div>
+    <div class="suggestions" id="suggestions"></div>
+    <form class="composer" id="chat-form">
+      <input id="chat-input" name="question" placeholder="Write to Harry here" data-i18n-placeholder="Write to Harry here"
+        aria-label="Your question" data-i18n-label="Your question" maxlength="1000" autocomplete="off">
+      <button type="submit" id="chat-send" aria-label="Send" data-i18n-label="Send" disabled><svg class="icon"><use href="#i-send"/></svg></button>
+    </form>
+    <p class="disclaimer" data-i18n>Harry AI can be wrong. Fact check important data.</p>
+  </aside>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p data-i18n>The favourite is the horse with the lowest final V-odds. A disqualified favourite counts as finishing last. Foreign tracks only publish the top 3, so a finish outside it shows as "outside top 3".</p>
+      <p data-i18n>A demo for a code case. Not affiliated with ATG. Race data from ATG's public racing API.</p>
+    </div>
+  </footer>
+
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+  <script src="chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,1814 @@
+{
+ "id": "V85_2026-09-27_5_5",
+ "status": "results",
+ "races": [
+  {
+   "id": "2026-09-27_5_5",
+   "number": 5,
+   "startTime": "2026-09-27T15:00:33",
+   "track": {
+    "name": "Solvalla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Iron Dice"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1802
+      },
+      "V85": {
+       "betDistribution": 529
+      }
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Steady Spender"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 204
+      },
+      "V85": {
+       "betDistribution": 4037
+      }
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Billy Hill"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 6333
+      },
+      "V85": {
+       "betDistribution": 78
+      }
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Victorious Tile"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 6727
+      },
+      "V85": {
+       "betDistribution": 28
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Buzz Lane"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 423
+      },
+      "V85": {
+       "betDistribution": 2282
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 11
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Troja Tooma"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3710
+      },
+      "V85": {
+       "betDistribution": 151
+      }
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Indian"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2221
+      },
+      "V85": {
+       "betDistribution": 431
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 7
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Perfect Batch"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 7438
+      },
+      "V85": {
+       "betDistribution": 60
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Nero Silver"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 8908
+      },
+      "V85": {
+       "betDistribution": 47
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 10
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Money Today"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2312
+      },
+      "V85": {
+       "betDistribution": 315
+      }
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Borups Eloh"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1650
+      },
+      "V85": {
+       "betDistribution": 692
+      }
+     },
+     "result": {
+      "finishOrder": 42,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Mister Nabab"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 604
+      },
+      "V85": {
+       "betDistribution": 1351
+      }
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    }
+   ]
+  },
+  {
+   "id": "2026-09-27_5_6",
+   "number": 6,
+   "startTime": "2026-09-27T15:22:44",
+   "track": {
+    "name": "Solvalla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Calgary Dreams"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 8917
+      },
+      "V85": {
+       "betDistribution": 42
+      }
+     },
+     "result": {
+      "finishOrder": 42,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Magnification"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 279
+      },
+      "V85": {
+       "betDistribution": 2885
+      }
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Followup"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1915
+      },
+      "V85": {
+       "betDistribution": 439
+      }
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Briljant Töll"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3333
+      },
+      "V85": {
+       "betDistribution": 272
+      }
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Fade My Way"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 11714
+      },
+      "V85": {
+       "betDistribution": 29
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Revin Boko"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 716
+      },
+      "V85": {
+       "betDistribution": 1234
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Deer Hunter"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 884
+      },
+      "V85": {
+       "betDistribution": 1147
+      }
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Aperfectsavior"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5869
+      },
+      "V85": {
+       "betDistribution": 35
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 7
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Out or In"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 10186
+      },
+      "V85": {
+       "betDistribution": 19
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 11
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Thai Medina"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 243
+      },
+      "V85": {
+       "betDistribution": 3843
+      }
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Erica Palema"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 11903
+      },
+      "V85": {
+       "betDistribution": 12
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 10
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Show Me Heaven"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5319
+      },
+      "V85": {
+       "betDistribution": 44
+      }
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    }
+   ]
+  },
+  {
+   "id": "2026-09-27_5_7",
+   "number": 7,
+   "startTime": "2026-09-27T15:44:15",
+   "track": {
+    "name": "Solvalla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Catch and Go"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 190
+      },
+      "V85": {
+       "betDistribution": 5031
+      }
+     },
+     "result": {
+      "finishOrder": 40,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Mister Navajo"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 4796
+      },
+      "V85": {
+       "betDistribution": 118
+      }
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Willy Rapid"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 435
+      },
+      "V85": {
+       "betDistribution": 1957
+      }
+     },
+     "result": {
+      "finishOrder": 41,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Vince Wynn"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1195
+      },
+      "V85": {
+       "betDistribution": 631
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 7
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Magnus Palema"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5475
+      },
+      "V85": {
+       "betDistribution": 80
+      }
+     },
+     "result": {
+      "finishOrder": 42,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Maximus Express"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3119
+      },
+      "V85": {
+       "betDistribution": 274
+      }
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "The Hustler"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 12618
+      },
+      "V85": {
+       "betDistribution": 26
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Henessi Otan"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3317
+      },
+      "V85": {
+       "betDistribution": 163
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Muscle Express"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5715
+      },
+      "V85": {
+       "betDistribution": 93
+      }
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Toto Tooma"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2368
+      },
+      "V85": {
+       "betDistribution": 291
+      }
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Com Best"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1017
+      },
+      "V85": {
+       "betDistribution": 877
+      }
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Court One"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1399
+      },
+      "V85": {
+       "betDistribution": 459
+      }
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    }
+   ]
+  },
+  {
+   "id": "2026-09-27_5_8",
+   "number": 8,
+   "startTime": "2026-09-27T16:06:01",
+   "track": {
+    "name": "Solvalla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Fatal Attraction"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 939
+      },
+      "V85": {
+       "betDistribution": 1201
+      }
+     },
+     "result": {
+      "finishOrder": 41,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "I See Tail Lights"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 297
+      },
+      "V85": {
+       "betDistribution": 2695
+      }
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Tidig Tooma"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 12067
+      },
+      "V85": {
+       "betDistribution": 21
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Jula Donatella"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2436
+      },
+      "V85": {
+       "betDistribution": 289
+      }
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Illicit Hooch"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 7128
+      },
+      "V85": {
+       "betDistribution": 79
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 7
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Bo Katan"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 4849
+      },
+      "V85": {
+       "betDistribution": 66
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Mellby Orkide"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 477
+      },
+      "V85": {
+       "betDistribution": 2403
+      }
+     },
+     "result": {
+      "finishOrder": 42,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Cruiser"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 398
+      },
+      "V85": {
+       "betDistribution": 1735
+      }
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Zeebreeze"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 906
+      },
+      "V85": {
+       "betDistribution": 1135
+      }
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Procope"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5549
+      },
+      "V85": {
+       "betDistribution": 63
+      }
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Navy Cut"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3100
+      },
+      "V85": {
+       "betDistribution": 148
+      }
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Klara Godiva"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3298
+      },
+      "V85": {
+       "betDistribution": 165
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 10
+     }
+    }
+   ]
+  },
+  {
+   "id": "2026-09-27_5_9",
+   "number": 9,
+   "startTime": "2026-09-27T16:28:20",
+   "track": {
+    "name": "Solvalla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Coloneltomparker"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1110
+      },
+      "V85": {
+       "betDistribution": 630
+      }
+     },
+     "result": {
+      "finishOrder": 41,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Bravo Desoto"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3966
+      },
+      "V85": {
+       "betDistribution": 133
+      }
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Ulix Turner"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1772
+      },
+      "V85": {
+       "betDistribution": 285
+      }
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Reagan Boko"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 393
+      },
+      "V85": {
+       "betDistribution": 1984
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Yardbird"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 4595
+      },
+      "V85": {
+       "betDistribution": 59
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Banzai Brodde"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1073
+      },
+      "V85": {
+       "betDistribution": 697
+      }
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Zarajevo Games"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 432
+      },
+      "V85": {
+       "betDistribution": 3012
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 7
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Vancouver Tile"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 4622
+      },
+      "V85": {
+       "betDistribution": 116
+      }
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "John McClane"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 6316
+      },
+      "V85": {
+       "betDistribution": 41
+      }
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Wingait Stefan"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2196
+      },
+      "V85": {
+       "betDistribution": 244
+      }
+     },
+     "result": {
+      "finishOrder": 42,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Po Tay Toes"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 316
+      },
+      "V85": {
+       "betDistribution": 2781
+      }
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Courage d'Inverne"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 14361
+      },
+      "V85": {
+       "betDistribution": 17
+      }
+     },
+     "result": {
+      "finishOrder": 40,
+      "disqualified": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "2026-09-27_5_10",
+   "number": 10,
+   "startTime": "2026-09-27T16:50:18",
+   "track": {
+    "name": "Solvalla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "In Fine Fettle"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1934
+      },
+      "V85": {
+       "betDistribution": 281
+      }
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Thor Tooma"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 6345
+      },
+      "V85": {
+       "betDistribution": 48
+      }
+     },
+     "result": {
+      "finishOrder": 42,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Bourbon Phantasy"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2242
+      },
+      "V85": {
+       "betDistribution": 520
+      }
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Kodiak Zet"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 131
+      },
+      "V85": {
+       "betDistribution": 7551
+      }
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Baby Love"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3785
+      },
+      "V85": {
+       "betDistribution": 116
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Neutron Star"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 538
+      },
+      "V85": {
+       "betDistribution": 1130
+      }
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Crew Lane"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 7276
+      },
+      "V85": {
+       "betDistribution": 45
+      }
+     },
+     "result": {
+      "place": 7,
+      "finishOrder": 7
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Bys Arigato"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 30188
+      },
+      "V85": {
+       "betDistribution": 9
+      }
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Prince of Euro"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2154
+      },
+      "V85": {
+       "betDistribution": 213
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Pivot Caigoo"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 9282
+      },
+      "V85": {
+       "betDistribution": 18
+      }
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "First Festive Vir"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 19849
+      },
+      "V85": {
+       "betDistribution": 9
+      }
+     },
+     "result": {
+      "finishOrder": 40,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Xanthis Lewis"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 6789
+      },
+      "V85": {
+       "betDistribution": 61
+      }
+     },
+     "result": {
+      "finishOrder": 41,
+      "disqualified": true
+     }
+    }
+   ]
+  },
+  {
+   "id": "2026-09-27_5_11",
+   "number": 11,
+   "startTime": "2026-09-27T17:13:12",
+   "track": {
+    "name": "Solvalla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Mister Never Die"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 245
+      },
+      "V85": {
+       "betDistribution": 4672
+      }
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Gilmore Rice"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3604
+      },
+      "V85": {
+       "betDistribution": 163
+      }
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "One Express"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1920
+      },
+      "V85": {
+       "betDistribution": 330
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 10
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Payback River"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2465
+      },
+      "V85": {
+       "betDistribution": 480
+      }
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "City Slicker"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 224
+      },
+      "V85": {
+       "betDistribution": 2980
+      }
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "No Hitter"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1529
+      },
+      "V85": {
+       "betDistribution": 529
+      }
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Napoleon Sisu"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 10162
+      },
+      "V85": {
+       "betDistribution": 27
+      }
+     },
+     "result": {
+      "finishOrder": 41,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Tennessee H.C."
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 7072
+      },
+      "V85": {
+       "betDistribution": 45
+      }
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Evert Palema"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 11018
+      },
+      "V85": {
+       "betDistribution": 12
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Global History"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2290
+      },
+      "V85": {
+       "betDistribution": 499
+      }
+     },
+     "result": {
+      "finishOrder": 42,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Zicken Zacke Zack"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 9072
+      },
+      "V85": {
+       "betDistribution": 20
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Nordic Dancer"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1963
+      },
+      "V85": {
+       "betDistribution": 243
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 7
+     }
+    }
+   ]
+  },
+  {
+   "id": "2026-09-27_5_12",
+   "number": 12,
+   "startTime": "2026-09-27T17:35:11",
+   "track": {
+    "name": "Solvalla"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "Pure Games"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2037
+      },
+      "V85": {
+       "betDistribution": 467
+      }
+     },
+     "result": {
+      "finishOrder": 42,
+      "disqualified": true
+     }
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "Long Night Out"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2747
+      },
+      "V85": {
+       "betDistribution": 386
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 11
+     }
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "Nanda Devi Cut"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 319
+      },
+      "V85": {
+       "betDistribution": 2151
+      }
+     },
+     "result": {
+      "place": 1,
+      "finishOrder": 1
+     }
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "Outer Space"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5972
+      },
+      "V85": {
+       "betDistribution": 98
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 8
+     }
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "Kålle"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2822
+      },
+      "V85": {
+       "betDistribution": 431
+      }
+     },
+     "result": {
+      "place": 6,
+      "finishOrder": 6
+     }
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "Vulcan Tile"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2840
+      },
+      "V85": {
+       "betDistribution": 453
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 7
+     }
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "Ready for Boarding"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1219
+      },
+      "V85": {
+       "betDistribution": 1013
+      }
+     },
+     "result": {
+      "place": 5,
+      "finishOrder": 5
+     }
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "Pepper Creation"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 4034
+      },
+      "V85": {
+       "betDistribution": 264
+      }
+     },
+     "result": {
+      "place": 3,
+      "finishOrder": 3
+     }
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "Ideal Kronos"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1161
+      },
+      "V85": {
+       "betDistribution": 980
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 10
+     }
+    },
+    {
+     "number": 10,
+     "horse": {
+      "name": "Turner Ale"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 3500
+      },
+      "V85": {
+       "betDistribution": 331
+      }
+     },
+     "result": {
+      "place": 4,
+      "finishOrder": 4
+     }
+    },
+    {
+     "number": 11,
+     "horse": {
+      "name": "Intro"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 215
+      },
+      "V85": {
+       "betDistribution": 3393
+      }
+     },
+     "result": {
+      "place": 2,
+      "finishOrder": 2
+     }
+    },
+    {
+     "number": 12,
+     "horse": {
+      "name": "Campitj"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 15629
+      },
+      "V85": {
+       "betDistribution": 34
+      }
+     },
+     "result": {
+      "place": 0,
+      "finishOrder": 9
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,133 @@
+{
+ "id": "trio_2026-10-05_67_2",
+ "status": "starting",
+ "races": [
+  {
+   "id": "2026-10-05_67_2",
+   "number": 2,
+   "startTime": "2026-10-05T15:07:15",
+   "track": {
+    "name": "Pontefract"
+   },
+   "starts": [
+    {
+     "number": 1,
+     "horse": {
+      "name": "TURNSTILE"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 746
+      },
+      "trio": {}
+     },
+     "result": {}
+    },
+    {
+     "number": 2,
+     "horse": {
+      "name": "SOCIAL SPIRIT"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 842
+      },
+      "trio": {}
+     },
+     "result": {}
+    },
+    {
+     "number": 3,
+     "horse": {
+      "name": "FLORAL MAID"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 453
+      },
+      "trio": {}
+     },
+     "result": {}
+    },
+    {
+     "number": 4,
+     "horse": {
+      "name": "PROSPERITY ANGEL"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 493
+      },
+      "trio": {}
+     },
+     "result": {}
+    },
+    {
+     "number": 5,
+     "horse": {
+      "name": "DESERT SMOKE"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 1223
+      },
+      "trio": {}
+     },
+     "result": {}
+    },
+    {
+     "number": 6,
+     "horse": {
+      "name": "REX REGUM"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 365
+      },
+      "trio": {}
+     },
+     "result": {}
+    },
+    {
+     "number": 7,
+     "horse": {
+      "name": "STATE OF GOLD"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 677
+      },
+      "trio": {}
+     },
+     "result": {}
+    },
+    {
+     "number": 8,
+     "horse": {
+      "name": "KIGALI"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 2368
+      },
+      "trio": {}
+     },
+     "result": {}
+    },
+    {
+     "number": 9,
+     "horse": {
+      "name": "CLASSYFIED"
+     },
+     "pools": {
+      "vinnare": {
+       "odds": 5839
+      },
+      "trio": {}
+     },
+     "result": {}
+    }
+   ]
+  }
+ ]
+}
