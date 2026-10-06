@@ -20,9 +20,9 @@ docker compose up
 
 Open http://localhost:8000 and pick a game type. An AI model on your own computer (Harry AI, Qwen 3.5 2B)
 answers every leg of the three latest finished games, and plain code checks every answer. The first start
-downloads the model once (1.3 GB); the page and the terminal show the progress. A new game type takes about
-two minutes on a laptop CPU, after that the answers are saved. Needs Docker with Compose 2.24 or newer, no
-GPU or API key.
+downloads the model once (1.3 GB); the page and the terminal show the progress. A new game type takes a few
+minutes on the CPU (V85, 24 legs: about 9 on an M1 MacBook Pro, where Docker cannot use the GPU), after that
+the answers are saved. Needs Docker with Compose 2.24 or newer, no GPU or API key.
 
 From the command line: `docker compose exec app python -m app.report V86` prints the four answers as a table.
 The API: `curl localhost:8000/api/report/V86` streams one JSON line per leg, then the summary.
@@ -46,7 +46,7 @@ answers in English or Swedish.
 
 ## Results
 
-The same 153 legs, answered fresh by both models on 6 October 2026:
+The same 153 legs, answered fresh by both models on 6 October 2026 (the local model on a desktop CPU):
 
 | Model | Legs fully right | Median and wins | Time per leg |
 |-------|------------------|-----------------|--------------|
