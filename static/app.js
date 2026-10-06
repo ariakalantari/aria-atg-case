@@ -390,15 +390,17 @@ function correctionText(event) {
 // What Harry saw, as two cards: before the race (only the odds) and after the race (only the result).
 // The boards hold the same data as the prompts, drawn as tables. The exact prompt is one click away.
 function stepsHtml(event) {
-  // In both tables Harry's three favourites get a boxed rank or place, and the one he named first a blue row.
-  // On a wrong leg the blue row sits on the wrong horse.
   const picked = new Set(event.llm.favourites);
   const favourite = event.llm.favourites[0];
-  const row = (r, rank, cells) => `
-    <tr class="${r.name === favourite ? "picked" : ""}"><td class="rank">${picked.has(r.name) ? `<span class="fav">${rank}</span>` : rank}</td>${cells}</tr>`;
-  const board = event.runners.map((r, i) => row(r, i + 1, `<td>${esc(r.name)}</td><td class="num">${odds(r.odds)}</td>`)).join("");
-  const result = [...event.runners].sort((a, b) => finishOrder(a.finish) - finishOrder(b.finish))
-    .map((r) => row(r, columnLabel(r.finish), `<td>${esc(r.name)}</td>`)).join("");
+  // Harry's three favourites get a tag in both tables, so you can follow them from the odds to the result
+  const tag = (name) => {
+    const n = event.llm.favourites.indexOf(name);
+    return n < 0 ? "" : ` <span class="fav-tag ${n === 0 ? "first" : ""}">${t("Fav {n}", { n: n + 1 })}</span>`;
+  };
+  const board = event.runners.map((r, i) => `
+    <tr class="${picked.has(r.name) ? "picked" : ""}"><td class="rank">${i + 1}</td><td>${esc(r.name)}${tag(r.name)}</td><td class="num">${odds(r.odds)}</td></tr>`).join("");
+  const result = [...event.runners].sort((a, b) => finishOrder(a.finish) - finishOrder(b.finish)).map((r) => `
+    <tr class="${r.name === favourite ? "picked" : ""}"><td class="rank">${columnLabel(r.finish)}</td><td>${esc(r.name)}${tag(r.name)}</td></tr>`).join("");
 
   const card = (letter, title, note, task, head, rows, answer, ok, prompt) => `
     <div class="step-card">

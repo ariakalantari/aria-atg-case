@@ -98,6 +98,7 @@ const SWEDISH = {
   "Harry got the favourite wrong: it is {right}, not {wrong}.": "Harry fick fel favorit: det är {right}, inte {wrong}.",
   "Harry had the favourite right, but the three favourites are {names}.": "Harry hade rätt favorit, men de tre favoriterna är {names}.",
   "Harry got the result wrong.": "Harry fick resultatet fel.",
+  "Fav {n}": "Fav {n}",
   "{horse} won.": "{horse} vann.",
   "{horse} finished {place}, so the favourite did not win.": "{horse} kom {place}, så favoriten vann inte.",
   "{horse} was disqualified, so the favourite did not win.": "{horse} diskvalificerades, så favoriten vann inte.",

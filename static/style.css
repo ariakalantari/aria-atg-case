@@ -591,8 +591,9 @@ button:focus-visible, summary:focus-visible {
 .board .num { text-align: right; }
 .board .rank { width: 48px; color: var(--soft); font: italic 800 13px var(--display); }
 .board tr.picked td { background: rgba(200, 228, 249, 0.4); color: var(--heading); font-weight: 700; }
-/* Harry's three favourites: a boxed rank or place, in both tables */
-.board .fav { display: inline-block; min-width: 26px; padding: 0 5px; border: 1px solid var(--sky); border-radius: 4px; background: #fff; color: var(--brand); text-align: center; }
+/* Harry's favourites, tagged in both tables: Fav 1 (the one asked about) in brand blue, 2 and 3 in grey */
+.fav-tag { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 4px; background: var(--chip); color: var(--soft); font: 700 10px/16px var(--body); letter-spacing: 0.3px; vertical-align: 1px; white-space: nowrap; }
+.fav-tag.first { background: var(--brand); color: #fff; }
 
 .harry-said { display: flex; align-items: center; gap: 8px; color: var(--heading); font-size: 14px; }
 .harry-said .orb { width: 18px; height: 18px; }
