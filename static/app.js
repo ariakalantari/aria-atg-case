@@ -340,11 +340,7 @@ function legHtml(event) {
     ? `<span class="result won">${t("Won")}</span>`
     : `<span class="result ${{ disqualified: "dq", unplaced: "outside" }[position] ?? ""}">${finishText(position)}</span>`;
 
-  const truth = event.truth;
-  const truthResult = truth.won ? t("won") : t("did not win ({place})", { place: finishText(truth.position).toLowerCase() });
-  const correction = allRight ? "" : `<p class="correction">${icon("cross")}<span>${t(
-    "The code says the favourites are {names}, and the favourite {result}.",
-    { names: `<strong>${esc(truth.favourites.map((name, i) => `${name} ${odds(truth.odds[i])}`).join(", "))}</strong>`, result: `<strong>${truthResult}</strong>` })}</span></p>`;
+  const correction = allRight ? "" : `<p class="correction">${icon("cross")}<span>${correctionText(event)}</span></p>`;
 
   return `
     <details class="leg ${allRight ? "right" : "wrong"}">
@@ -372,15 +368,37 @@ function legHtml(event) {
     </details>`;
 }
 
+// What Harry got wrong in a leg, and the right answer, in plain words
+function correctionText(event) {
+  const { llm, truth, checks, runners } = event;
+  const horse = (name) => `<strong>${esc(name)}</strong> (${odds(runners.find((r) => r.name === name).odds)})`;
+  const favourite = `<strong>${esc(truth.favourites[0])}</strong>`;
+  const outcome = truth.won ? t("{horse} won.", { horse: favourite })
+    : truth.position === "disqualified" ? t("{horse} was disqualified, so the favourite did not win.", { horse: favourite })
+    : truth.position === "unplaced" ? t("{horse} finished outside the top 3, so the favourite did not win.", { horse: favourite })
+    : t("{horse} finished {place}, so the favourite did not win.", { horse: favourite, place: ordinal(Number(truth.position)) });
+  if (llm.favourites[0] !== truth.favourites[0]) {
+    return `${t("Harry got the favourite wrong: it is {right}, not {wrong}.", { right: horse(truth.favourites[0]), wrong: horse(llm.favourites[0]) })} ${outcome}`;
+  }
+  if (!checks.favourites) { // the favourite is right, the other two or the V-odds are not
+    const three = t("Harry had the favourite right, but the three favourites are {names}.", { names: truth.favourites.map(horse).join(", ") });
+    return checks.position && checks.won ? three : `${three} ${outcome}`;
+  }
+  return `${t("Harry got the result wrong.")} ${outcome}`;
+}
+
 // What Harry saw, as two cards: before the race (only the odds) and after the race (only the result).
 // The boards hold the same data as the prompts, drawn as tables. The exact prompt is one click away.
 function stepsHtml(event) {
+  // In both tables Harry's three favourites get a boxed rank or place, and the one he named first a blue row.
+  // On a wrong leg the blue row sits on the wrong horse.
   const picked = new Set(event.llm.favourites);
   const favourite = event.llm.favourites[0];
-  const board = event.runners.map((r, i) => `
-    <tr class="${picked.has(r.name) ? "picked" : ""}"><td class="rank">${i + 1}</td><td>${esc(r.name)}</td><td class="num">${odds(r.odds)}</td></tr>`).join("");
-  const result = [...event.runners].sort((a, b) => finishOrder(a.finish) - finishOrder(b.finish)).map((r) => `
-    <tr class="${r.name === favourite ? "picked" : ""}"><td class="rank">${columnLabel(r.finish)}</td><td>${esc(r.name)}</td></tr>`).join("");
+  const row = (r, rank, cells) => `
+    <tr class="${r.name === favourite ? "picked" : ""}"><td class="rank">${picked.has(r.name) ? `<span class="fav">${rank}</span>` : rank}</td>${cells}</tr>`;
+  const board = event.runners.map((r, i) => row(r, i + 1, `<td>${esc(r.name)}</td><td class="num">${odds(r.odds)}</td>`)).join("");
+  const result = [...event.runners].sort((a, b) => finishOrder(a.finish) - finishOrder(b.finish))
+    .map((r) => row(r, columnLabel(r.finish), `<td>${esc(r.name)}</td>`)).join("");
 
   const card = (letter, title, note, task, head, rows, answer, ok, prompt) => `
     <div class="step-card">

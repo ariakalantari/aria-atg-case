@@ -22,6 +22,7 @@ from pathlib import Path
 import httpx
 
 from . import ask, check, clean, fetch
+from .words import ordinal
 
 
 async def report(game_type: str, use_cache: bool = True, mode: str = "local"):
@@ -137,9 +138,9 @@ async def main(game_type: str, mode: str) -> None:
         elif event["type"] == "summary":
             llm, truth, checks = event["llm"], event["truth"], event["checks"]
             wins = "right" if checks["wins"] else f"wrong, code counted {truth['wins']}"
-            median = "right" if checks["median"] else f"wrong, code got {truth['median']:g}"
+            median = "right" if checks["median"] else f"wrong, code got {ordinal(truth['median'])}"
             print(f"\nThe favourite won {llm['wins']} of {llm['legs']} legs, {llm['win_rate']:.0%} ({wins})")
-            print(f"Median finishing position: {llm['median']:g} ({median})")
+            print(f"Median finishing position: {ordinal(llm['median'])} ({median})")
             print(f"The odds gave the favourite a {event['odds_win_rate']:.0%} chance on average")
             if event["summed_up_by"] == "code":
                 print("(Win count and median counted by code from the model's own per-leg answers.)")

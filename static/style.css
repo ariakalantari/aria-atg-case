@@ -591,6 +591,8 @@ button:focus-visible, summary:focus-visible {
 .board .num { text-align: right; }
 .board .rank { width: 48px; color: var(--soft); font: italic 800 13px var(--display); }
 .board tr.picked td { background: rgba(200, 228, 249, 0.4); color: var(--heading); font-weight: 700; }
+/* Harry's three favourites: a boxed rank or place, in both tables */
+.board .fav { display: inline-block; min-width: 26px; padding: 0 5px; border: 1px solid var(--sky); border-radius: 4px; background: #fff; color: var(--brand); text-align: center; }
 
 .harry-said { display: flex; align-items: center; gap: 8px; color: var(--heading); font-size: 14px; }
 .harry-said .orb { width: 18px; height: 18px; }
