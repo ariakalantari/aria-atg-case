@@ -7,6 +7,8 @@ const FULL_NAMES = { dd: "Dagens Dubbel", ld: "Lunchdubbel" };
 const $ = (selector) => document.querySelector(selector);
 let running = null; // AbortController for the report being streamed, so we can cancel it
 let state = null;   // everything we know about the current report
+let mode = savedMode(); // which model answers: "local" (on this computer) or "claude" (Claude on Foundry)
+const models = { local: "", claude: null, claudeReady: false }; // from /api/status
 
 // ---------- start ----------
 
@@ -30,8 +32,15 @@ function init() {
     const button = event.target.closest("button");
     if (button && button.dataset.lang !== lang) {
       setLanguage(button.dataset.lang);
+      showMode();
       if (state) load(state.type); // during the first start there is no report yet
     }
+  });
+  $(".mode-switch").addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button || button.dataset.mode === mode) return;
+    if (button.dataset.mode === "claude" && !models.claudeReady) return showModeNote();
+    setMode(button.dataset.mode);
   });
   waitForModel();
 }
@@ -41,19 +50,26 @@ function init() {
 // alone, with real progress, and the report waits instead of failing. Later starts skip all this.
 
 const download = { at: 0, done: 0, speed: 0, moved: 0 }; // last sample, for the speed and time left
+let started = false; // the report has started (the setup screen is done)
+let nextCheck = null; // the timer for the next status check while the setup screen shows
 
+// Claude mode needs no download, so it starts at once. Local mode waits for its model.
 async function waitForModel() {
-  let status = { llm: "offline", model: "" };
+  let status = { llm: "offline", name: "", claude: { ready: false } };
   try {
     status = await (await fetch("/api/status")).json();
   } catch {}
-  if (status.model) $("#model-name").textContent = shortModel(status.model);
-  if (status.llm === "ready") return startPage();
+  Object.assign(models, { local: status.name, claude: status.claude.name, claudeReady: status.claude.ready });
+  if (mode === "claude" && !models.claudeReady) mode = "local"; // no key here, so Local it is
+  showMode();
+  if (mode === "claude" || status.llm === "ready") return startPage();
+  started = false;
   showSetup(status);
-  setTimeout(waitForModel, 1000);
+  nextCheck = setTimeout(waitForModel, 1000);
 }
 
 function showSetup(status) {
+  running?.abort(); // back to Local mode before its model is ready: stop the Claude report
   document.body.classList.add("setting-up");
   $("#setup").hidden = false;
   const got = status.download;
@@ -100,6 +116,8 @@ function markSteps(active) {
 }
 
 async function startPage() {
+  if (started) return;
+  started = true;
   if (document.body.classList.contains("setting-up")) {
     markSteps(2); // downloaded and loaded; the report starts now
     $("#download-text").textContent = t("Saved on this computer");
@@ -108,7 +126,55 @@ async function startPage() {
     document.body.classList.remove("setting-up");
     $("#setup").hidden = true;
   }
-  load("V85");
+  load(state?.type ?? "V85");
+}
+
+// ---------- Claude mode / Local mode ----------
+
+function savedMode() {
+  try {
+    return localStorage.getItem("mode") === "claude" ? "claude" : "local";
+  } catch {
+    return "local";
+  }
+}
+
+// Everything switches: the report (answered again, or from saved answers) and Harry (a new chat)
+function setMode(next) {
+  mode = next;
+  try {
+    localStorage.setItem("mode", next);
+  } catch {}
+  started = false;
+  clearTimeout(nextCheck); // a check still waiting from before would start a second loop
+  newChat();
+  waitForModel();
+}
+
+function showMode() {
+  document.body.dataset.mode = mode;
+  document.querySelectorAll(".mode-switch button").forEach((button) => {
+    const name = button.dataset.mode === "claude" ? t("Claude mode") : t("Local mode");
+    button.setAttribute("aria-pressed", button.dataset.mode === mode);
+    button.classList.toggle("unavailable", button.dataset.mode === "claude" && !models.claudeReady);
+    button.setAttribute("aria-label", name);
+    button.title = button.dataset.mode === "claude" && !models.claudeReady ? t("Claude mode only runs on Aria's computer, so the API key stays safe") : name;
+  });
+  const model = (mode === "claude" ? models.claude : models.local) || "";
+  $("#model-name").textContent = model;
+  $("#intro-text").textContent = mode === "claude"
+    ? t("Pick a game type. Harry AI, running on {model} in the cloud, answers every leg of its three latest games, and plain code checks every answer.", { model })
+    : t("Pick a game type. Harry AI, a small AI model on this computer, answers every leg of its three latest games, and plain code checks every answer.");
+  $("#runs-on").textContent = mode === "claude" ? t("Runs on Claude in the cloud") : t("Runs on this computer");
+}
+
+// Claude was clicked, but this computer has no key for it
+function showModeNote() {
+  const note = $("#mode-note");
+  note.textContent = t("Claude mode only runs on Aria's computer, so the API key stays safe");
+  note.hidden = false;
+  clearTimeout(note.timer);
+  note.timer = setTimeout(() => (note.hidden = true), 4000);
 }
 
 // ---------- streaming ----------
@@ -131,7 +197,8 @@ async function load(type) {
   setProgress(t("Fetching the latest games from ATG"));
 
   try {
-    const response = await fetch(`/api/report/${type}`, { signal: running.signal });
+    const response = await fetch(`/api/report/${type}?mode=${mode}`, { signal: running.signal });
+    if (!response.ok) return showMessage(t("Something went wrong. Please try again."));
     for await (const event of readLines(response)) handle(event);
   } catch (error) {
     if (error.name !== "AbortError") showMessage(t("Lost contact with the app. Check that it is still running."));
@@ -165,6 +232,7 @@ function errorText(event) {
   const texts = {
     no_games: t("ATG has no finished {type} games right now.", { type: state.type }),
     model_not_ready: t("The local model is not ready yet. It may still be downloading or loading."),
+    claude_unavailable: t("Claude is not available right now. Switch to Local mode, or check the key in .env."),
     atg_unavailable: t("Could not get data from ATG right now. Please try again in a moment."),
     failed: t("Something went wrong. Please try again."),
   };
@@ -178,7 +246,7 @@ function showGames(event) {
   event.games.forEach((game) => (state.games[game.id] = game));
   $("#fact-games").textContent = event.games.length;
   $("#fact-legs").textContent = state.legsTotal;
-  $("#model-name").textContent = shortModel(event.model);
+  $("#model-name").textContent = event.model;
 
   $("#games").innerHTML = event.games.map((game) => `
     <article class="game" id="game-${game.id}">
@@ -206,7 +274,7 @@ function showLeg(event) {
   const game = document.getElementById(`game-${event.game}`);
   game.querySelector(".legs").insertAdjacentHTML("beforeend", legHtml(event));
   const legsShown = state.legs.filter((leg) => leg.game === event.game);
-  const wins = legsShown.filter((leg) => leg.llm.won).length;
+  const wins = legsShown.filter((leg) => leg.truth.won).length; // the real count, Harry's answers are in the rows
   game.querySelector(".score").textContent = t("Favourite won {w} of {n}", { w: wins, n: legsShown.length });
 
   drawFinishes(undefined, true);
@@ -226,10 +294,23 @@ function showSummary(event) {
     checks.wins ? [true, t("Code agrees")] : [false, t("Wrong, code counted {n}", { n: truth.wins })]);
   const fresh = state.legs.some((leg) => !leg.cached);
   const time = fresh ? t("{s} s on this computer", { s: event.seconds }) : t("Saved answers from an earlier run");
-  $("#answers-score").textContent = `${t("{right} of {checked} answers right, checked by code", { right: state.right, checked: state.checked })} • ${time}`;
+  // Claude sums up its own answers; for the small local model, code counts them (it cannot count 24 lines)
+  const summed = event.summed_up_by === "model" ? t("Harry also answered the median and win rate")
+    : t("Median and win rate counted by code from Harry's answers");
+  $("#answers-score").textContent = `${t("{right} of {checked} answers right, checked by code", { right: state.right, checked: state.checked })} • ${summed} • ${time}`;
+  // The answer to the case's question in one sentence, from the code's count
+  const than = truth.win_rate > event.odds_win_rate ? "more" : truth.win_rate < event.odds_win_rate ? "less" : "same";
+  $("#verdict").textContent = t(VERDICT[than], { w: truth.wins, n: truth.legs, pct: percent(truth.win_rate), odds: percent(event.odds_win_rate) });
+  $("#verdict").hidden = false;
   drawFinishes(llm.median);
   setProgress("");
 }
+
+const VERDICT = {
+  more: "The answer: the customers' favourite won {w} of {n} legs ({pct}). The odds gave it {odds}, so it won more often than the odds expected.",
+  less: "The answer: the customers' favourite won {w} of {n} legs ({pct}). The odds gave it {odds}, so it won less often than the odds expected.",
+  same: "The answer: the customers' favourite won {w} of {n} legs ({pct}). The odds gave it {odds}, and it won just as often.",
+};
 
 function showMessage(text) {
   $("#message").textContent = text;
@@ -243,13 +324,14 @@ function legHtml(event) {
   const byName = Object.fromEntries(event.runners.map((r) => [r.name, r]));
   const allRight = Object.values(event.checks).every(Boolean);
 
+  // Name and V-odds as Harry answered them; start number and bet share from the data
   const picks = event.llm.favourites.map((name, i) => {
     const r = byName[name];
     const share = r.bet_share === null ? "" : ` • ${state.type} ${Math.round(r.bet_share)}<small>%</small>`;
     return `<li class="pick ${i === 0 ? "first" : ""}">
       <span class="number">${r.number}</span>
-      <span class="pick-text"><span class="name">${esc(r.name)}</span>
-      <span class="odds">V-odds ${odds(r.odds)}${share}</span></span>
+      <span class="pick-text"><span class="name">${esc(name)}</span>
+      <span class="odds">V-odds ${odds(event.llm.odds[i])}${share}</span></span>
     </li>`;
   }).join("");
 
@@ -262,7 +344,7 @@ function legHtml(event) {
   const truthResult = truth.won ? t("won") : t("did not win ({place})", { place: finishText(truth.position).toLowerCase() });
   const correction = allRight ? "" : `<p class="correction">${icon("cross")}<span>${t(
     "The code says the favourites are {names}, and the favourite {result}.",
-    { names: `<strong>${esc(truth.favourites.join(", "))}</strong>`, result: `<strong>${truthResult}</strong>` })}</span></p>`;
+    { names: `<strong>${esc(truth.favourites.map((name, i) => `${name} ${odds(truth.odds[i])}`).join(", "))}</strong>`, result: `<strong>${truthResult}</strong>` })}</span></p>`;
 
   return `
     <details class="leg ${allRight ? "right" : "wrong"}">
@@ -312,7 +394,7 @@ function stepsHtml(event) {
   return `<div class="steps-grid">
     ${card("A", t("Before the race"), t("Harry only saw the odds"), t("Who are the three favourites?"),
       `<th>#</th><th>${t("Horse")}</th><th class="num">V-odds</th>`, board,
-      esc(event.llm.favourites.join(", ")), event.checks.favourites, event.prompts[0])}
+      esc(event.llm.favourites.map((name, i) => `${name} ${odds(event.llm.odds[i])}`).join(", ")), event.checks.favourites, event.prompts[0])}
     ${card("B", t("After the race"), t("Harry only saw the result"), t("Where did {horse} finish, and did it win?", { horse: esc(favourite) }),
       `<th>${t("Place")}</th><th>${t("Horse")}</th>`, result,
       `${esc(finishText(event.llm.position))}, ${event.llm.won ? t("won") : t("did not win")}`,
@@ -361,13 +443,12 @@ function drawFinishes(median, animateLast = false) {
   }
 }
 
-// ---------- small helpers ----------
-
 // ---------- Harry's answers to the four questions ----------
 
 function resetAnswers() {
   ["favourites", "won", "median", "rate"].forEach((name) => setAnswer(name, null));
   $("#answers-score").innerHTML = SKELETON;
+  $("#verdict").hidden = true;
 }
 
 // Questions 1 and 2 are answered per leg, so they fill in while Harry works
@@ -377,7 +458,7 @@ function showLegAnswers() {
   const status = (right) => [right === legs.length, t("{k} of {n} right", { k: right, n: legs.length })];
   setAnswer("favourites", t("All {n} legs", { n: legs.length }),
     `<a href="#games">${t("See every leg below")}</a>`, status(count("favourites")));
-  setAnswer("won", t("Won {w}, lost {l}", { w: state.wins, l: legs.length - state.wins }), "", status(count("won")));
+  setAnswer("won", t("Won {w} of {n}", { w: state.wins, n: legs.length }), "", status(count("won")));
   $("#answers-score").textContent = t("{right} of {checked} answers right, checked by code", { right: state.right, checked: state.checked });
 }
 
@@ -413,12 +494,6 @@ const SKELETON = `<span class="skeleton"></span>`;
 const percent = (x) => `${Math.round(x * 100)}%`;
 const icon = (name) => `<svg class="icon icon-${name}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
 const mark = (ok) => `<span class="${ok ? "ok" : "bad"}">${icon(ok ? "check" : "cross")}</span>`;
-
-// "unsloth/Qwen3.5-2B-GGUF:Q4_K_M" -> "Qwen 3.5 2B"
-function shortModel(id) {
-  const match = id.match(/Qwen([\d.]+)-(\d+B)/i);
-  return match ? `Qwen ${match[1]} ${match[2]}` : id;
-}
 
 function esc(text) {
   return String(text).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

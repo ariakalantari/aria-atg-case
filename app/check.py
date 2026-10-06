@@ -14,13 +14,21 @@ def leg_answer(leg: Leg) -> dict:
     favourite = leg.runners[0]
     return {
         "favourites": [runner.name for runner in leg.runners[:3]],
+        "odds": [round(runner.odds, 2) for runner in leg.runners[:3]],
         "position": favourite.finish,
         "won": favourite.finish == "1",
     }
 
 
 def compare(llm: dict, truth: dict) -> dict:
-    return {key: llm[key] == truth[key] for key in truth}
+    """One check per question. The favourites need the right names and V-odds. Where the favourite
+    finished only counts when the model asked about the right horse, not by lucky coincidence."""
+    right_horse = llm["favourites"][:1] == truth["favourites"][:1]
+    return {
+        "favourites": llm["favourites"] == truth["favourites"] and llm.get("odds") == truth["odds"],
+        "position": right_horse and llm["position"] == truth["position"],
+        "won": right_horse and llm["won"] == truth["won"],
+    }
 
 
 def position(label: str, leg: Leg) -> tuple[int, bool]:

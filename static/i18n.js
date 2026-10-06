@@ -37,7 +37,15 @@ const SWEDISH = {
   "How often the favourite wins": "Hur ofta favoriten vinner",
   "All {n} legs": "Alla {n} avdelningar",
   "See every leg below": "Se alla avdelningar nedan",
-  "Won {w}, lost {l}": "Vann {w}, förlorade {l}",
+  "Won {w} of {n}": "Vann {w} av {n}",
+  "Harry also answered the median and win rate": "Harry svarade också på medianen och vinstandelen",
+  "Median and win rate counted by code from Harry's answers": "Median och vinstandel räknade av koden utifrån Harrys svar",
+  "The answer: the customers' favourite won {w} of {n} legs ({pct}). The odds gave it {odds}, so it won more often than the odds expected.":
+    "Svaret: kundernas favorit vann {w} av {n} avdelningar ({pct}). Oddsen gav den {odds}, så den vann oftare än oddsen väntade.",
+  "The answer: the customers' favourite won {w} of {n} legs ({pct}). The odds gave it {odds}, so it won less often than the odds expected.":
+    "Svaret: kundernas favorit vann {w} av {n} avdelningar ({pct}). Oddsen gav den {odds}, så den vann mer sällan än oddsen väntade.",
+  "The answer: the customers' favourite won {w} of {n} legs ({pct}). The odds gave it {odds}, and it won just as often.":
+    "Svaret: kundernas favorit vann {w} av {n} avdelningar ({pct}). Oddsen gav den {odds}, och den vann precis så ofta.",
   "Half of the favourites finished {x} or better": "Hälften av favoriterna kom {x} eller bättre",
   "{a} of {b} ({pct})": "{a} av {b} ({pct})",
   "The odds gave it a {x} chance": "Oddsen gav {x} vinstchans",
@@ -123,11 +131,22 @@ const SWEDISH = {
   "Biggest upsets": "Största skrällarna",
   "Show leg 1 at {track}": "Visa avdelning 1 på {track}",
   "Compare all game types": "Jämför alla spelformer",
-  "Is the favourite a good bet?": "Lönar det sig att spela på favoriten?",
+  "Did favourites beat the odds?": "Vann favoriterna oftare än oddsen trodde?",
   "What does V-odds mean?": "Vad betyder V-odds?",
   "Reading your question": "Tolkar fråga", // ATG's own assistant says exactly this
   "Reading the results": "Läser resultaten",
   "Stopped": "Stoppad",
+
+  // Claude mode / Local mode
+  "Model": "Modell",
+  "Claude mode": "Claude-läge",
+  "Local mode": "Lokalt läge",
+  "Claude mode only runs on Aria's computer, so the API key stays safe": "Claude-läget körs bara på Arias dator, så att API-nyckeln hålls säker",
+  "Pick a game type. Harry AI, running on {model} in the cloud, answers every leg of its three latest games, and plain code checks every answer.":
+    "Välj en spelform. Harry AI, som körs på {model} i molnet, svarar på varje avdelning i de tre senaste omgångarna, och vanlig kod kontrollerar varje svar.",
+  "Runs on Claude in the cloud": "Körs på Claude i molnet",
+  "Claude is not available right now. Switch to Local mode, or check the key in .env.":
+    "Claude är inte tillgänglig just nu. Byt till lokalt läge, eller kontrollera nyckeln i .env.",
 
   // first start (the model download)
   "Getting Harry ready": "Harry gör sig redo",

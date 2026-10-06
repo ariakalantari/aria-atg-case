@@ -20,7 +20,10 @@ services:
   app:
     build: .
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"   # this computer only, not the whole network (Claude mode costs money)
+    env_file:
+      - path: .env       # the Claude mode key, if you have one (see .env.example)
+        required: false
     environment:
       LLM_URL: http://llm:8080
       LLM_MODEL: ${LLM_MODEL:-unsloth/Qwen3.5-2B-GGUF:Q4_K_M}

@@ -15,14 +15,14 @@ import json
 
 import httpx
 
-from . import ask, followups, tools
+from . import ask, claude, followups, tools
 from .words import answer_language, say
 
 MAX_ROUNDS = 4
 NUDGE = "If this answers the question, reply to the user now."  # added to tool results, small models need it
 
 SYSTEM = """You are Harry AI (Harry for short), the assistant on Aria ATG Case, a page about ATG horse racing \
-results in Sweden. You are a small model (Qwen 3.5 2B) running on this computer.
+results in Sweden. {model}
 
 You only help with ATG and horse racing: ATG's games, races, odds, favourites, horses, betting words and this page. \
 If someone asks for anything else (code, poems, stories, recipes, general trivia), say kindly in one sentence that \
@@ -35,8 +35,10 @@ favorit = favourite, skräll = upset, vann = won, placering = finishing position
 spela på = bet on, mest spelad = most bet on.
 
 Tools: call a tool when the question is about specific races, games, legs, odds, favourites, winners or horses, \
-or when real numbers from the races would make your answer better (for example whether betting on favourites pays off). \
+or when real numbers from the races would make your answer better (for example how often favourites won). \
 Answer greetings and questions about words and rules directly, without tools. \
+Never give betting advice or say whether a bet is good: give the facts (how often favourites won and \
+what the odds expected) and let people decide. \
 Earlier tool results in this conversation are real data: use them for follow-up questions when they have \
 the answer, otherwise call a tool. Never make up race data or numbers.
 
@@ -54,12 +56,18 @@ V5 has 5, V4 has 4 and V3 has 3. dd (Dagens Dubbel) and ld (Lunchdubbel) have 2.
 - On this page you, Harry, answered every leg of the three most recent finished games of a game type: \
 you named the favourites and said how the favourite did, and plain code checked every one of your answers.
 
-How to answer: short and friendly, at most five sentences or a short list. Give the final answer only, \
-never think out loud or correct yourself. Use **bold** for key names and numbers. Do not use em dashes. \
-The page shows each tool result as a table, so do not repeat whole tables."""
+How to answer: short and friendly, at most five sentences or a short list. When you need a tool, call it \
+straight away without writing anything first. Start with the answer itself (no openers like "Great question"). \
+Give the final answer only, \
+never think out loud or correct yourself. Use **bold** for key names and numbers. Never join clauses with a dash \
+(no em dash, en dash or --): use a comma or a new sentence. \
+The page shows each tool result as a table under your answer, so never write a table yourself \
+(no | characters): answer in sentences or a short list."""
+LOCAL = f"You are a small model ({ask.display(ask.MODEL)}) running on this computer."
+CLOUD = "You run on {name} by Anthropic, in the cloud on Microsoft Foundry."
 
 
-async def chat(messages: list[dict], game_type: str, lang: str = "en"):
+async def chat(messages: list[dict], game_type: str, lang: str = "en", mode: str = "local"):
     """Answer the last message. Yields events: tool (with a table), token (text), done, then followups.
 
     The done event lists the tool calls of this turn with their facts. The page keeps them with
@@ -70,8 +78,9 @@ async def chat(messages: list[dict], game_type: str, lang: str = "en"):
     """
     async with httpx.AsyncClient(timeout=30) as client:
         games = await tools.load(client, game_type)
+        who = CLOUD.format(name=ask.display(await claude.model())) if mode == "claude" else LOCAL
         conversation = [
-            {"role": "system", "content": SYSTEM},
+            {"role": "system", "content": SYSTEM.format(model=who)},
             *replay(messages[:-1]),
             with_page_note(messages[-1], game_type, games, lang),
         ]
@@ -79,8 +88,9 @@ async def chat(messages: list[dict], game_type: str, lang: str = "en"):
 
         for _ in range(MAX_ROUNDS):
             text, calls = "", {}
-            async for kind, value in stream(client, conversation):
+            async for kind, value in stream(client, conversation, mode):
                 if kind == "text":
+                    value = value.replace("\u2014", "-").replace("\u2013", "-")  # house style: no long dashes
                     text += value
                     yield {"type": "token", "text": value}
                 else:
@@ -93,18 +103,18 @@ async def chat(messages: list[dict], game_type: str, lang: str = "en"):
             conversation.append({"role": "assistant", "content": text, "tool_calls": calls})
             for call in calls:
                 facts, view, label = await tools.run(client, call["function"]["name"], arguments(call), game_type, lang)
-                used.append({"name": call["function"]["name"], "arguments": arguments(call), "facts": facts})
+                used.append({"name": call["function"]["name"], "arguments": arguments(call), "facts": facts[:40]})
                 views.append(view)
                 yield {"type": "tool", "name": call["function"]["name"], "label": label, "view": view}
                 conversation.append({"role": "tool", "tool_call_id": call["id"], "content": "\n".join([*facts, NUDGE])})
         else:  # still asking for tools after the last round
             answer = say(lang, "I could not finish that one. Try asking about one game or one leg.")
             yield {"type": "token", "text": answer}
-        yield {"type": "done", "calls": used}
+        yield {"type": "done", "calls": used[-6:]}  # what the page sends back next time (main.py limits)
 
         if answer.strip():  # ideas for what to ask next, in the same language as the answer
             questions = await followups.suggest(client, messages, answer, list(zip(used, views)), game_type, games,
-                                                answer_language(messages[-1]["content"], lang))
+                                                answer_language(messages[-1]["content"], lang), mode)
             yield {"type": "followups", "questions": questions}
 
 
@@ -114,11 +124,11 @@ def replay(messages: list[dict]) -> list[dict]:
     for n, message in enumerate(messages):
         calls = message.get("calls") or []
         if calls:
-            ids = [f"past_{n}_{i}" for i in range(len(calls))]
+            call_ids = [f"past_{n}_{i}" for i in range(len(calls))]
             out.append({"role": "assistant", "content": "", "tool_calls": [
-                {"id": id, "type": "function", "function": {"name": c["name"], "arguments": json.dumps(c["arguments"])}}
-                for id, c in zip(ids, calls)]})
-            out += [{"role": "tool", "tool_call_id": id, "content": "\n".join(c["facts"])} for id, c in zip(ids, calls)]
+                {"id": call_id, "type": "function", "function": {"name": c["name"], "arguments": json.dumps(c["arguments"])}}
+                for call_id, c in zip(call_ids, calls)]})
+            out += [{"role": "tool", "tool_call_id": call_id, "content": "\n".join(c["facts"])} for call_id, c in zip(call_ids, calls)]
         out.append({"role": message["role"], "content": message["content"]})
     return out
 
@@ -128,7 +138,8 @@ def with_page_note(message: dict, game_type: str, games: list, lang: str = "en")
     Keeping it out of the system prompt lets the server reuse the cached system prompt and tool list."""
     latest = ", ".join(f"{game.track} on {tools.day(game)}" for game in games) or "none"
     if answer_language(message["content"], lang) == "sv":
-        language = (" Answer in Swedish, with ATG's words: avdelning (plural avdelningar), omgång, spelform, "
+        language = (" Answer in Swedish, with ATG's words: avdelning (plural avdelningar, count legs in these, "
+                    "never in omgångar), omgång, spelform, "
                     "vann, placering, skräll, favorit, mest spelad, V-odds. Write decimals with a comma, like 43,92.")
     else:
         language = " Answer in English."
@@ -136,8 +147,12 @@ def with_page_note(message: dict, game_type: str, games: list, lang: str = "en")
     return {"role": "user", "content": f"{note}\n\n{message['content']}"}
 
 
-async def stream(client: httpx.AsyncClient, conversation: list[dict]):
+async def stream(client: httpx.AsyncClient, conversation: list[dict], mode: str = "local"):
     """Stream one model reply. Yields ("text", str) and ("tool", partial tool call) pieces."""
+    if mode == "claude":
+        async for piece in claude.stream(conversation, tools.SCHEMAS):
+            yield piece
+        return
     body = {
         "messages": conversation,
         "tools": tools.SCHEMAS,
@@ -154,8 +169,7 @@ async def stream(client: httpx.AsyncClient, conversation: list[dict]):
             for choice in json.loads(line[6:]).get("choices", []):
                 delta = choice.get("delta", {})
                 if delta.get("content"):
-                    # House style: no em or en dashes in anything we show
-                    yield "text", delta["content"].replace("\u2014", "-").replace("\u2013", "-")
+                    yield "text", delta["content"]
                 for part in delta.get("tool_calls") or []:
                     yield "tool", part
 

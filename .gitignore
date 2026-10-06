@@ -19,6 +19,7 @@ htmlcov/
 # Local config and downloaded data
 .env
 .env.*
+!.env.example
 cache/
 models/
 *.gguf

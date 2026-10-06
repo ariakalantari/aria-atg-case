@@ -57,7 +57,7 @@ SWEDISH = {
     "Show {game_type} at {track}": "Visa {game_type} på {track}",
     "Summarise {game_type}": "Sammanfatta {game_type}",
     "Compare all game types": "Jämför alla spelformer",
-    "Is the favourite a good bet?": "Lönar det sig att spela på favoriten?",
+    "Did favourites beat the odds?": "Vann favoriterna oftare än oddsen trodde?",
     "What does V-odds mean?": "Vad betyder V-odds?",
 }
 

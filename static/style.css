@@ -2,7 +2,6 @@
 
 :root {
   --brand: #006DB6;
-  --brand-dark: #004F9F;
   --canvas: #F5F7FA;
   --card: #FFFFFF;
   --heading: #2A3E50;
@@ -52,7 +51,15 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-h1, h2, h3, h4, h5, p { margin: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+
+/* ATG's small grey caps label: table heads, chart labels, tile labels, notes */
+.leg-header, .board th, .data-card th, .column .label, .mini-tiles div > span, .note {
+  color: var(--label);
+  font: 700 10px/14px var(--body);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
 h1, h2, h3 { color: var(--heading); }
 
 /* ATG's focus ring: a white gap, then sky blue */
@@ -111,10 +118,10 @@ button:focus-visible, summary:focus-visible {
 
 .topbar-actions { display: flex; align-items: center; gap: 12px; }
 
-/* Language switch: two round flags on a soft track, the chosen one ringed in white */
-.lang-switch { display: flex; gap: 4px; padding: 3px; border-radius: 9999px; background: rgba(255, 255, 255, 0.15); }
+/* The language and mode switches: two round icons on a soft track, the chosen one ringed in white */
+.lang-switch, .mode-switch { display: flex; gap: 4px; padding: 3px; border-radius: 9999px; background: rgba(255, 255, 255, 0.15); }
 
-.lang-switch button {
+.lang-switch button, .mode-switch button {
   display: grid;
   place-items: center;
   width: 30px;
@@ -128,12 +135,24 @@ button:focus-visible, summary:focus-visible {
   transition: opacity 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
 
-.lang-switch button:hover { opacity: 0.85; }
-.lang-switch button[aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 2px #fff; }
+.lang-switch button:hover, .mode-switch button:hover { opacity: 0.85; }
+.lang-switch button[aria-pressed="true"], .mode-switch button[aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 2px #fff; }
 .flag-icon { display: block; width: 26px; height: 26px; border-radius: 50%; }
 
+/* Claude mode / Local mode: Claude's mark on its cream, a laptop for the model on this computer */
+.mode-switch { position: relative; }
+.mode-icon { display: block; width: 26px; height: 26px; border-radius: 50%; }
+.mode-icon.claude { background: #F5F4EE; }
+.mode-icon.local { background: #fff; color: var(--brand); }
+.mode-switch button.unavailable { opacity: 0.3; cursor: not-allowed; }
+.mode-note {
+  position: absolute; top: calc(100% + 10px); left: 0; z-index: 30; width: max-content; max-width: 240px;
+  padding: 8px 12px; border-radius: var(--radius); background: #fff; color: var(--text); font-size: 13px; line-height: 18px;
+  box-shadow: var(--shadow-raised);
+}
+
 /* ATG's toolbar button (like "Fråga AI"): white, radius 8, link blue text */
-.harry-toggle {
+.harry-toggle, .ask-harry {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -148,7 +167,7 @@ button:focus-visible, summary:focus-visible {
   transition: background-color 0.2s var(--ease);
 }
 
-.harry-toggle:hover { background: #F5F9FD; }
+.harry-toggle:hover, .ask-harry:hover { background: #F5F9FD; }
 .harry-toggle .orb { width: 20px; height: 20px; }
 .harry-toggle .name { color: var(--text); font: italic 800 16px/1 var(--display); text-transform: uppercase; }
 
@@ -298,6 +317,7 @@ button:focus-visible, summary:focus-visible {
 .answers-head .orb { width: 36px; height: 36px; }
 .answers-head h2 { font-size: 20px; line-height: 26px; }
 .answers-head p { color: var(--soft); font-size: 14px; }
+.answers-verdict { padding: 14px 24px; border-top: 1px solid var(--line); background: #F5F9FD; color: var(--heading); font-size: 17px; line-height: 24px; font-weight: 500; }
 
 .answer-list { margin: 0; padding: 0; list-style: none; counter-reset: question; }
 
@@ -378,12 +398,7 @@ button:focus-visible, summary:focus-visible {
 
 .column .label {
   padding: 6px 0;
-  color: var(--label);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
   text-align: center;
-  text-transform: uppercase;
 }
 
 .column.win .label { color: var(--good); }
@@ -447,10 +462,6 @@ button:focus-visible, summary:focus-visible {
 .leg-header {
   height: 32px;
   border-bottom: 1px solid var(--line);
-  color: var(--label);
-  font: 700 10px/14px var(--body);
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
 }
 
 .leg { border-bottom: 1px solid var(--line); }
@@ -532,22 +543,7 @@ button:focus-visible, summary:focus-visible {
 .detail-head h4 { color: var(--heading); font-size: 16px; font-weight: 500; }
 
 /* Same white toolbar button as "Harry AI" in the top bar */
-.ask-harry {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 34px;
-  padding: 0 12px 0 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  background: #fff;
-  color: var(--link);
-  font: 500 14px var(--body);
-  cursor: pointer;
-  transition: background-color 0.2s var(--ease);
-}
-
-.ask-harry:hover { background: #F5F9FD; }
+.ask-harry { height: 34px; padding: 0 12px 0 8px; } /* the same button as .harry-toggle, a little smaller */
 .ask-harry .orb { width: 18px; height: 18px; }
 
 .steps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
@@ -590,7 +586,7 @@ button:focus-visible, summary:focus-visible {
 
 .board-scroll { overflow-x: auto; }
 .board { width: 100%; border-collapse: collapse; font-size: 13px; }
-.board th { padding: 4px 8px; color: var(--label); font: 700 10px/14px var(--body); letter-spacing: 0.4px; text-align: left; text-transform: uppercase; }
+.board th { padding: 4px 8px; text-align: left; }
 .board td { padding: 5px 8px; border-top: 1px solid var(--line); color: var(--text); }
 .board .num { text-align: right; }
 .board .rank { width: 48px; color: var(--soft); font: italic 800 13px var(--display); }
@@ -663,7 +659,7 @@ button:focus-visible, summary:focus-visible {
 
 .assistant { display: flex; flex-direction: column; background: #fff; }
 
-/* White 48px header: "Start over" left, name centered, close right */
+/* White 48px header: "New chat" left, name centered, close right */
 .assistant-head {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -748,7 +744,6 @@ button:focus-visible, summary:focus-visible {
 .thinking { color: var(--link); font-size: 16px; line-height: 22px; }
 .thinking::after { content: "..."; display: inline-block; width: 0; overflow: hidden; vertical-align: bottom; animation: dots 1.2s steps(4) infinite; }
 
-.note { color: var(--label); font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
 .tool-step { justify-self: start; display: inline-flex; align-items: center; gap: 6px; color: var(--soft); font-size: 12px; font-weight: 500; }
 .tool-step .icon { width: 16px; height: 16px; color: var(--good); }
 .tool-step, .data-card, .note { animation: rise 0.2s var(--ease) both; }
@@ -758,6 +753,15 @@ button:focus-visible, summary:focus-visible {
   animation: fade-in 0.6s ease-out both;
   animation-delay: calc(0.2s + var(--i, 0) * 50ms);
 }
+
+/* Numbers in the cards roll up from 0 like a counter, as their row fades in. Each digit is a column
+   of 0 to 9 laid over an invisible copy of the real digit, moved up by its value (chat.js rolling()).
+   clip-path hides the rest of the column without moving the text baseline, as overflow would. */
+.roll { position: relative; display: inline-block; clip-path: inset(0); font-variant-numeric: tabular-nums; }
+.roll > i { visibility: hidden; font-style: inherit; }
+.roll > span { position: absolute; top: 0; left: 0; transform: translateY(calc(var(--d) * -1lh)); }
+.data-card .roll > span { animation: roll 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both; animation-delay: calc(0.3s + var(--i, 0) * 50ms); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Suggestion chips docked above the input, like ATG's assistant. After an answer the same row
    holds the follow-up ideas, the way ATG shows them. */
@@ -841,7 +845,6 @@ button:focus-visible, summary:focus-visible {
   text-align: center;
 }
 
-/* Tool results: white cards with a game color stripe, like ATG's small cards */
 /* A plain white card, and the title led by ATG's small game tag (the colored "V85" chip) */
 .data-card { margin: 0; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.12); border-radius: var(--radius); background: #fff; }
 .data-card figcaption { display: flex; align-items: center; gap: 8px; padding: 12px 12px 8px; color: var(--heading); font-size: 14px; font-weight: 700; }
@@ -849,7 +852,6 @@ button:focus-visible, summary:focus-visible {
 .mini-tiles { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
 .mini-tiles div { display: grid; padding: 8px 12px; }
 .mini-tiles div + div { border-left: 1px solid var(--line); }
-.mini-tiles span { color: var(--label); font-size: 10px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
 .mini-tiles strong { color: var(--heading); font: italic 800 20px/24px var(--display); text-transform: uppercase; }
 
 .table-scroll { overflow-x: auto; }
@@ -858,11 +860,7 @@ button:focus-visible, summary:focus-visible {
 .data-card th {
   padding: 6px 10px;
   border-top: 1px solid var(--line);
-  color: var(--label);
-  font: 700 10px/14px var(--body);
-  letter-spacing: 0.4px;
   text-align: left;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -981,6 +979,7 @@ li.done .bar span { background: var(--good); }
 @keyframes dots { to { width: 1.2em; } }
 @keyframes skeleton { 50% { opacity: 0.4; } }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes roll { from { transform: translateY(0); } }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
@@ -1030,6 +1029,13 @@ li.done .bar span { background: var(--good); }
 @media (max-width: 599px) {
   .wordmark { font-size: 17px; }
   .topbar-actions { gap: 8px; }
-  .harry-toggle .beta { display: none; }
-  .lang-switch button { padding: 0 8px; }
+  .harry-toggle .beta, .harry-toggle .name { display: none; } /* the orb alone, so both switches fit */
+  .harry-toggle { padding: 0 9px; }
+}
+
+/* The smallest phones (320px): a little tighter so the top bar still fits */
+@media (max-width: 359px) {
+  .wordmark { font-size: 14px; }
+  .topbar-actions { gap: 6px; }
+  .lang-switch, .mode-switch { gap: 2px; padding: 2px; }
 }

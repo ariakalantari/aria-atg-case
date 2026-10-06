@@ -1,3 +1,5 @@
+import pytest
+
 from app import check
 from app.clean import Leg, Runner
 
@@ -15,9 +17,20 @@ def test_leg_answer(load):
     leg1 = load(BODEN, True).legs[0]
     assert check.leg_answer(leg1) == {
         "favourites": ["R.K.Kiara", "Arizona", "Sonoma L.A."],
+        "odds": [2.25, 5.32, 7.67],
         "position": "1",
         "won": True,
     }
+
+
+def test_compare_needs_the_right_odds_and_the_right_horse(load):
+    truth = check.leg_answer(load(BODEN, True).legs[0])
+    assert all(check.compare(truth, truth).values())
+    wrong_odds = {**truth, "odds": [2.25, 5.32, 9.99]}
+    assert check.compare(wrong_odds, truth)["favourites"] is False
+    # Asked about the wrong horse, a matching finish is luck, not a right answer
+    wrong_horse = {**truth, "favourites": ["Arizona", "R.K.Kiara", "Sonoma L.A."]}
+    assert check.compare(wrong_horse, truth) == {"favourites": False, "position": False, "won": False}
 
 
 def test_summary_over_real_games(load):
@@ -54,4 +67,4 @@ def test_compare():
 
 def test_odds_win_rate_is_a_probability(load):
     rate = check.odds_win_rate(load(BODEN, True).legs)
-    assert 0 < rate < 1
+    assert rate == pytest.approx(0.3647, abs=0.0001)  # the odds gave Boden's favourites 36% on average

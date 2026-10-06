@@ -1,7 +1,8 @@
 // The Harry AI sidebar, styled after ATG's own assistant panel. Harry chats freely and calls
 // tools when it needs race data. Nothing is saved anywhere: the page keeps this conversation
 // and sends the last few messages with each question. "New chat" clears it.
-// Uses helpers from app.js ($, esc, icon, readLines, state) and i18n.js (t, lang, odds).
+// Uses helpers from app.js ($, esc, icon, readLines, errorText, columnLabel, state, mode) and
+// i18n.js (t, lang, odds). app.js calls newChat (mode switch) and askAboutLeg (the leg button).
 
 const HISTORY_SENT = 7; // the last few messages the model sees (odd, so it starts with a question)
 const FADE_MS = 600;    // how long a new word takes to fade in
@@ -38,7 +39,8 @@ function setChatOpen(open) {
 }
 
 function newChat() {
-  chat.tail?.abort(); // late follow-ups from the last answer must not land in the new chat
+  chat.tail?.abort(); // stop the last answer and its follow-ups, so nothing late lands in the new chat
+  setBusy(null);
   chat.history = [];
   $("#chat-messages").innerHTML = heroHtml();
   $("#suggestions").innerHTML = suggestionsHtml();
@@ -72,12 +74,13 @@ async function askAssistant(question, chip = null) {
   const request = fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages, game_type: state.type, lang }),
+    body: JSON.stringify({ messages, game_type: state.type, lang, mode }),
     signal: stop.signal,
   }).catch(() => null);
 
   $("#chat-input").value = "";
-  await showQuestion(question, chip);
+  await showQuestion(question, chip, stop.signal);
+  if (chat.busy !== stop) return; // "New chat" (or a mode switch) came during the animation
   const reply = addReply();
 
   let answer = "";
@@ -94,7 +97,11 @@ async function askAssistant(question, chip = null) {
   };
   try {
     const response = await request;
-    if (!response?.ok) throw new Error();
+    if (!response) throw new Error();
+    if (!response.ok) { // the app answered but refused (for example a too long conversation)
+      reply.show({ type: "error", code: "failed" });
+      return end();
+    }
     for await (const event of readLines(response)) {
       if (event.type === "done") end(event.calls);
       else if (event.type === "followups") showFollowUps(event.questions);
@@ -136,7 +143,7 @@ function updateSend() {
 
 // The empty state fades out and the suggestions fold away.
 // A picked suggestion lifts out and flies into place as the question.
-async function showQuestion(question, chip) {
+async function showQuestion(question, chip, signal) {
   const list = $("#chat-messages");
   const ideas = $("#suggestions");
   const bubble = document.createElement("div");
@@ -166,6 +173,7 @@ async function showQuestion(question, chip) {
       { duration: time(260), easing: "ease-in", ...hold }).finished);
   }
   await Promise.all(folding);
+  if (signal.aborted) return ghost?.remove(); // a new chat started meanwhile: leave it alone
   hero?.remove();
   ideas.getAnimations().forEach((animation) => animation.cancel());
   ideas.hidden = true;
@@ -241,7 +249,7 @@ function addReply() {
           ${event.view ? viewHtml(event.view) : ""}<p class="thinking">${t("Reading the results")}</p>`);
       }
       if (event.type === "error") {
-        body.insertAdjacentHTML("beforeend", `<p class="ai-text error">${esc(event.message)}</p>`);
+        body.insertAdjacentHTML("beforeend", `<p class="ai-text error">${esc(errorText(event))}</p>`);
       }
       scrollChat();
     },
@@ -291,7 +299,7 @@ function suggestionsHtml() {
     t("Biggest upsets"),
     latest ? t("Show leg 1 at {track}", { track: latest.track }) : null,
     t("Compare all game types"),
-    t("Is the favourite a good bet?"),
+    t("Did favourites beat the odds?"),
     t("What does V-odds mean?"),
   ].filter(Boolean);
   return chipsHtml(ideas);
@@ -307,7 +315,7 @@ function viewHtml(view) {
   const first = view.tiles ? 2 : 1; // the row after the caption (and tiles)
   const order = (i) => `style="--i:${Math.min(i, 12)}"`;
   const tiles = view.tiles
-    ? `<div class="mini-tiles" ${order(1)}>${view.tiles.map((t) => `<div><span>${esc(t.label)}</span><strong>${esc(t.value)}</strong></div>`).join("")}</div>`
+    ? `<div class="mini-tiles" ${order(1)}>${view.tiles.map((t) => `<div><span>${esc(t.label)}</span><strong>${rolling(t.value)}</strong></div>`).join("")}</div>`
     : "";
   const head = view.columns.map((c) => `<th class="${c.type}">${esc(c.label)}</th>`).join("");
   const rows = view.rows.map((row, i) =>
@@ -321,12 +329,21 @@ function viewHtml(view) {
     </figure>`;
 }
 
+// Digits that roll up from 0 like a counter (style.css .roll): each digit is a column of 0 to 9 over
+// an invisible copy of the real digit, which keeps the width and the line. Screen readers get the plain text.
+function rolling(text) {
+  const digits = [...String(text)].map((c) => (/[0-9]/.test(c)
+    ? `<span class="roll"><i>${c}</i><span style="--d:${c}">0<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9</span></span>`
+    : esc(c))).join("");
+  return `<span class="sr-only">${esc(text)}</span><span aria-hidden="true">${digits}</span>`;
+}
+
 function cellHtml(type, value) {
   if (value === null || value === undefined) return "";
   if (type === "runner") return `<span class="number">${value.number}</span><span class="name">${esc(value.name)}</span>`;
   if (type === "leg") return `<span class="leg-flag">${value.leg}</span><span class="track">${esc(value.track)}</span>`;
   if (type === "odds") return odds(value);
-  if (type === "percent") return `${Math.round(value * 100)}<small>%</small>`;
+  if (type === "percent") return `${rolling(Math.round(value * 100))}<small>%</small>`;
   if (type === "game") return `<span class="game-tag" data-game="${esc(value)}">${esc(value)}</span>`;
   if (type === "finish") {
     if (value === "1") return `<span class="won-flag">${t("Won")}</span>`;

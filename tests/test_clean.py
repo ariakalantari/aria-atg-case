@@ -54,3 +54,17 @@ def test_bet_share_only_exists_for_v_games(load):
 def test_game_info(load):
     game = load(BODEN, True)
     assert (game.id, game.track, len(game.legs)) == (BODEN, "Boden", 8)
+
+
+def test_joint_favourites_go_by_bet_share_then_start_number():
+    from conftest import raw
+    from app import clean
+
+    game = raw(BODEN)
+    a, b = [s for s in game["races"][0]["starts"] if not s.get("scratched")][:2]
+    for start in (a, b):
+        start["pools"]["vinnare"]["odds"] = 101  # both 1.01, the lowest in the race
+    a["pools"]["V85"]["betDistribution"], b["pools"]["V85"]["betDistribution"] = 1000, 2000
+    assert clean.parse_game(game).legs[0].runners[0].number == b["number"]  # more bet share wins the tie
+    b["pools"]["V85"]["betDistribution"] = 1000
+    assert clean.parse_game(game).legs[0].runners[0].number == min(a["number"], b["number"])  # then the lower number

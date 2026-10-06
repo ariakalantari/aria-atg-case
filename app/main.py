@@ -6,28 +6,29 @@ from contextlib import asynccontextmanager
 from pathlib import Path as FilePath
 from typing import Annotated, Literal
 
+import anthropic
 import httpx
 from fastapi import FastAPI, Path
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import agent, ask, download
+from . import agent, ask, claude, download
 from .report import report
 
-log = logging.getLogger(__name__)
-terminal = logging.getLogger("uvicorn.error")  # uvicorn's own logger, so these lines show in the terminal
+log = logging.getLogger("uvicorn.error")  # uvicorn's own logger, so these lines show in the terminal
 
 
 @asynccontextmanager
 async def lifespan(_app):
-    task = asyncio.create_task(announce())
+    task = asyncio.create_task(download.announce())
     yield
     task.cancel()
 
 
 app = FastAPI(title="Aria ATG Case", lifespan=lifespan)
-GAME_TYPE = r"^[A-Za-z0-9]{1,8}$"
+GAME_TYPE_PATTERN = r"^[A-Za-z0-9]{1,8}$"
+Mode = Literal["local", "claude"]  # which model answers: the local one, or Claude on Foundry
 
 
 class PastCall(BaseModel):
@@ -45,56 +46,29 @@ class Message(BaseModel):
 
 class Chat(BaseModel):
     messages: list[Message] = Field(min_length=1, max_length=12)  # the page sends only the last few
-    game_type: str = Field(pattern=GAME_TYPE)
+    game_type: str = Field(pattern=GAME_TYPE_PATTERN)
     lang: Literal["en", "sv"] = "en"
+    mode: Mode = "local"
 
 
 @app.get("/api/report/{game_type}")
-async def get_report(game_type: str = Path(pattern=GAME_TYPE)):
+async def get_report(game_type: str = Path(pattern=GAME_TYPE_PATTERN), mode: Mode = "local"):
     """The report for one game type, streamed so the page fills in leg by leg."""
-    return stream_lines(report(game_type), f"Report for {game_type}")
+    return stream_lines(report(game_type, mode=mode), f"Report for {game_type}")
 
 
 @app.post("/api/chat")
 async def post_chat(chat: Chat):
     """One answer from the assistant, streamed word by word."""
     messages = [message.model_dump() for message in chat.messages]
-    return stream_lines(agent.chat(messages, chat.game_type, chat.lang), "Chat")
+    return stream_lines(agent.chat(messages, chat.game_type, chat.lang, chat.mode), "Chat")
 
 
 @app.get("/api/status")
 async def get_status():
-    """Is Harry's model ready? While it is still downloading, also how far it has come."""
+    """Which models are ready. While the local one is still downloading, also how far it has come."""
     async with httpx.AsyncClient() as client:
-        return await model_status(client)
-
-
-async def model_status(client: httpx.AsyncClient) -> dict:
-    state = await ask.status(client)
-    result = {"llm": state, "model": ask.MODEL}
-    if state == "offline":  # llama.cpp only starts listening once the model is downloaded
-        result["download"] = await download.progress(client)
-    return result
-
-
-async def announce():
-    """Say in the terminal where to open the page, and how the first-start download is going.
-    llama.cpp prints nothing while it downloads, so without this the terminal looks stuck."""
-    terminal.info("Aria ATG Case is running. Open http://localhost:8000")
-    said = ""
-    async with httpx.AsyncClient() as client:
-        while (status := await model_status(client))["llm"] != "ready":
-            line = "Starting Harry's model..."
-            if (got := status.get("download")) and got["done"] < got["total"]:
-                line = (f"Downloading Harry's model, only on the first start: {got['done'] * 100 // got['total'] // 10 * 10}%"
-                        f" of {got['total'] / 1e9:.1f} GB. The page shows the progress too.")
-            elif got or status["llm"] == "loading":
-                line = "Loading Harry's model into memory..."
-            if line != said:
-                terminal.info(line)
-                said = line
-            await asyncio.sleep(2)
-    terminal.info("Harry is ready.")
+        return await download.status(client)
 
 
 def stream_lines(events, what: str) -> StreamingResponse:
@@ -107,6 +81,10 @@ def stream_lines(events, what: str) -> StreamingResponse:
                 yield json.dumps(event) + "\n"
         except httpx.HTTPError as error:
             yield json.dumps(error_event(error)) + "\n"
+        except (claude.Unavailable, anthropic.APIError) as error:
+            log.warning("%s: Claude failed: %s", what, error)
+            yield json.dumps({"type": "error", "code": "claude_unavailable",
+                              "message": "Claude is not available right now. Switch to Local mode, or check the key in .env."}) + "\n"
         except Exception:
             log.exception("%s failed", what)
             yield json.dumps({"type": "error", "code": "failed", "message": "Something went wrong. Please try again."}) + "\n"

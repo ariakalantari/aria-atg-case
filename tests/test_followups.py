@@ -29,9 +29,9 @@ def test_after_a_leg_the_next_leg_comes_first(v85):
 
 def test_after_favourite_stats(v85):
     ideas = after("favourite_stats", {"game_type": "V85"}, tools.favourite_stats(v85, "V85"), v85)
-    assert ideas[:4] == ["Biggest upsets in V85", "Compare all game types", "Is the favourite a good bet?", "Bets against odds in V85"]
+    assert ideas[:4] == ["Biggest upsets in V85", "Compare all game types", "Did favourites beat the odds?", "Bets against odds in V85"]
     swedish = after("favourite_stats", {"game_type": "V85"}, tools.favourite_stats(v85, "V85", "sv"), v85, "sv")
-    assert swedish[:3] == ["Största skrällarna i V85", "Jämför alla spelformer", "Lönar det sig att spela på favoriten?"]
+    assert swedish[:3] == ["Största skrällarna i V85", "Jämför alla spelformer", "Vann favoriterna oftare än oddsen trodde?"]
 
 
 def test_no_bet_share_ideas_for_dd(load):
@@ -97,7 +97,7 @@ def test_choose_keeps_good_picks_and_checks_the_own_question():
 
 @pytest.mark.anyio
 async def test_suggest_falls_back_to_preset_ideas_when_the_model_fails(v85, monkeypatch):
-    async def broken(client, prompt, schema):
+    async def broken(*args):  # fails the way a bad model reply does
         raise ValueError("not json")
     monkeypatch.setattr(followups.ask, "ask", broken)
     turn = [({"name": "upsets", "arguments": {"game_type": "V85"}, "facts": ["..."]}, tools.upsets(v85, "V85")[1])]
@@ -111,4 +111,4 @@ async def test_suggest_skips_what_was_already_asked(v85):
     messages = [{"role": "user", "content": "Summarise V85"}, {"role": "assistant", "content": "..."},
                 {"role": "user", "content": "biggest upsets in v85"}]
     questions = await followups.suggest(None, messages, "Hi!", [], "V85", v85, "en")  # no tools: no model call
-    assert questions == ["Compare all game types", "Is the favourite a good bet?", "Show leg 1 at Boden"]
+    assert questions == ["Compare all game types", "Did favourites beat the odds?", "Show leg 1 at Boden"]

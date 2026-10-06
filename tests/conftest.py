@@ -15,7 +15,7 @@ def raw(game_id: str) -> dict:
 
 @pytest.fixture
 def load():
-    """load("V85_...") gives the raw game, load("V85_...", clean=True) the parsed Game."""
+    """load("V85_...") gives the raw game, load("V85_...", True) the parsed Game."""
     return lambda game_id, clean_it=False: clean.parse_game(raw(game_id)) if clean_it else raw(game_id)
 
 

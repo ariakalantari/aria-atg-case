@@ -12,7 +12,7 @@ import httpx
 
 from . import check, clean, fetch, words
 from .clean import Game, Leg, Runner
-from .words import say
+from .words import ordinal, say
 
 GAME_TYPE = {"type": "string", "enum": fetch.GAME_TYPES}
 TRACK = {"type": "string", "description": "Track name from the question or the conversation so far, "
@@ -82,15 +82,20 @@ async def run(client: httpx.AsyncClient, name: str, args: dict, page_game_type: 
 
 # ---------- the tools ----------
 
+def how_favourites_did(legs: list[Leg]) -> tuple[dict, float]:
+    """Wins, win rate and median finish of the real favourites, and the win chance the odds gave them."""
+    return check.summary([(check.leg_answer(leg), leg) for leg in legs]), check.odds_win_rate(legs)
+
+
 def favourite_stats(games: list[Game], game_type: str, lang: str = "en"):
-    legs = [leg for game in games for leg in game.legs]
-    summary = check.summary([(check.leg_answer(leg), leg) for leg in legs])
-    odds = check.odds_win_rate(legs)
+    summary, odds = how_favourites_did([leg for game in games for leg in game.legs])
+    than = "more often than" if summary["win_rate"] > odds else "less often than" if summary["win_rate"] < odds else "as often as"
     facts = [
         f"In the latest {len(games)} {game_type} games the favourite won {summary['wins']} of "
         f"{summary['legs']} legs ({percent(summary['win_rate'])}).",
+        f"The odds gave the favourite a {percent(odds)} chance to win on average, so the favourites won {than} "
+        "the odds expected. That comparison is the fair yardstick, not 50%.",
         f"The favourite's median finishing position was {median_text(summary)}.",
-        f"The odds gave the favourite a {percent(odds)} chance to win on average.",
     ]
     rows = []
     for game in games:
@@ -116,9 +121,11 @@ def compare_game_types(games_by_type: dict[str, list[Game]], lang: str = "en"):
     for game_type, games in games_by_type.items():
         legs = [leg for game in games for leg in game.legs]
         if legs:
-            summary = check.summary([(check.leg_answer(leg), leg) for leg in legs])
+            summary, odds = how_favourites_did(legs)
             rows.append({"game": game_type, "legs": summary["legs"], "won": summary["win_rate"],
-                         "expected": check.odds_win_rate(legs), "median": summary})
+                         "expected": odds, "median": summary})
+    if not rows:
+        return ["None of the game types has any finished games right now."], None
     rows.sort(key=lambda row: row["won"], reverse=True)
     best, worst = rows[0], rows[-1]
     facts = [
@@ -256,12 +263,15 @@ def bets_vs_odds(games: list[Game], game_type: str, lang: str = "en"):
 
 def find_horse(games: list[Game], game_type: str, name: str, lang: str = "en"):
     needle = plain(name)
+    if len(needle) < 3:  # "a" would match every other horse
+        return ["Ask for the horse with at least 3 letters of its name."], None
     found = [(game, leg, rank, runner) for game in games for leg in game.legs
-             for rank, runner in enumerate(leg.runners) if needle and needle in plain(runner.name)]
+             for rank, runner in enumerate(leg.runners) if needle in plain(runner.name)]
     if not found:
         return [f"No horse called {name} ran in the latest {game_type} games."], None
-    facts, rows = [], []
-    for game, leg, rank, runner in found:
+    facts = [f"{len(found)} horses matched {name}. These are the first 10."] if len(found) > 10 else []
+    rows = []
+    for game, leg, rank, runner in found[:10]:
         place = "the favourite (lowest odds)" if rank == 0 else f"number {rank + 1} in the odds (not the favourite)"
         facts.append(f"{runner.name} ran leg {leg.number} of {game_type} at {game.track} on {day(game)} at odds "
                      f"{runner.odds:.2f}, {place}, and {outcome(runner)}.")
@@ -327,10 +337,6 @@ def outcome(runner: Runner) -> str:
 
 def day(game: Game, lang: str = "en") -> str:
     return words.day(game.start, lang)
-
-
-def ordinal(n: float, lang: str = "en") -> str:
-    return words.ordinal(n, lang)
 
 
 def median_text(summary: dict, lang: str = "en") -> str:

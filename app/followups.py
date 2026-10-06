@@ -19,14 +19,14 @@ MAX_LENGTH = 48         # longer chips do not fit the panel on a phone
 
 
 async def suggest(client: httpx.AsyncClient, messages: list[dict], answer: str, turn: list[tuple[dict, dict | None]],
-                  page_type: str, games: list[Game], lang: str) -> list[str]:
+                  page_type: str, games: list[Game], lang: str, mode: str = "local") -> list[str]:
     """Up to three follow-up questions. turn holds (call, view) for each tool Harry ran this time."""
     asked = {tools.plain(m["content"]) for m in messages if m["role"] == "user"}
     ideas = [idea for idea in candidates(turn, page_type, games, lang) if tools.plain(idea) not in asked][:6]
     if not turn or len(ideas) < 3:  # small talk, words and rules, or a polite no: preset ideas, no model call
         return ideas[:3]
     try:
-        reply = await ask.ask(client, *prompt(messages[-1]["content"], answer, turn, ideas, lang))
+        reply = await ask.ask(client, *prompt(messages[-1]["content"], answer, turn, ideas, lang), mode)
         return choose(reply, ideas, asked, lang, answer)
     except Exception:  # follow-ups are an extra: any failure falls back to the preset ideas
         return ideas[:3]
@@ -41,7 +41,7 @@ def candidates(turn: list[tuple[dict, dict | None]], page_type: str, games: list
         say(lang, "Summarise {game_type}", game_type=page_type),
         say(lang, "Biggest upsets in {game_type}", game_type=page_type),
         say(lang, "Compare all game types"),
-        say(lang, "Is the favourite a good bet?"),
+        say(lang, "Did favourites beat the odds?"),
     ]
     if games:
         ideas.append(say(lang, "Show leg {leg} at {track}", leg=1, track=games[0].track))
@@ -63,15 +63,15 @@ def ideas_after(name: str, args: dict, view: dict | None, page_type: str, games:
         return idea("Show leg {leg} in {game_type}", leg=cell["leg"])
 
     upsets, summary = idea("Biggest upsets in {game_type}"), idea("Summarise {game_type}")
-    good_bet, compare = idea("Is the favourite a good bet?"), idea("Compare all game types")
+    beat_odds, compare = idea("Did favourites beat the odds?"), idea("Compare all game types")
     bets = [] if game_type in NO_POOL else [idea("Bets against odds in {game_type}")]
     if name == "favourite_stats":
-        return [upsets, compare, good_bet, *bets]
+        return [upsets, compare, beat_odds, *bets]
     if not rows:  # the tool found nothing (a leg that does not exist, an unknown track)
         return []
     if name == "compare_game_types":
         best, worst = rows[0]["game"], rows[-1]["game"]
-        return [idea("Summarise {game_type}", game_type=best), idea("Biggest upsets in {game_type}", game_type=worst), good_bet]
+        return [idea("Summarise {game_type}", game_type=best), idea("Biggest upsets in {game_type}", game_type=worst), beat_odds]
     if name == "leg_details":
         track = track_for(args, game_type, page_type, games)
         number = args["leg"]
@@ -85,7 +85,7 @@ def ideas_after(name: str, args: dict, view: dict | None, page_type: str, games:
         return [*(show_leg(row["leg"]) for row in surprises[:1]),
                 *(idea("Show {game_type} at {track}", track=other) for other in others[:1]), upsets, summary]
     if name == "upsets":
-        return [*(show_leg(row["leg"]) for row in rows[:2]), good_bet, *bets]
+        return [*(show_leg(row["leg"]) for row in rows[:2]), beat_odds, *bets]
     if name == "bets_vs_odds":
         return [show_leg(rows[0]["leg"]), upsets, summary]
     if name == "find_horse":

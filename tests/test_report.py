@@ -1,5 +1,7 @@
 import pytest
 
+import statistics
+
 from app import ask, check, fetch, report
 from conftest import raw
 
@@ -14,14 +16,18 @@ def fake_atg(tmp_path, monkeypatch):
         return [raw(g) for g in GAMES]
     monkeypatch.setattr(fetch, "recent_games", recent_games)
 
+    async def honest_summary(client, rows, mode="local"):  # counts exactly what its per-leg answers say
+        return {"wins": sum(place == 1 for _, _, place in rows), "median": statistics.median(p for _, _, p in rows)}
+    monkeypatch.setattr(ask, "ask_summary", honest_summary)
 
-async def run(game_type="V85", use_cache=True):
-    return [event async for event in report.report(game_type, use_cache)]
+
+async def run(game_type="V85", use_cache=True, mode="local"):
+    return [event async for event in report.report(game_type, use_cache, mode)]
 
 
 @pytest.mark.anyio
 async def test_perfect_model_passes_every_check(monkeypatch):
-    async def perfect(client, leg):
+    async def perfect(client, leg, mode="local"):
         return check.leg_answer(leg)
     monkeypatch.setattr(ask, "ask_leg", perfect)
 
@@ -37,7 +43,7 @@ async def test_perfect_model_passes_every_check(monkeypatch):
 
 @pytest.mark.anyio
 async def test_wrong_answers_are_caught(monkeypatch):
-    async def always_says_won(client, leg):
+    async def always_says_won(client, leg, mode="local"):
         return {**check.leg_answer(leg), "position": "1", "won": True}
     monkeypatch.setattr(ask, "ask_leg", always_says_won)
 
@@ -51,7 +57,7 @@ async def test_wrong_answers_are_caught(monkeypatch):
 async def test_answers_are_reused_for_finished_games(monkeypatch):
     calls = []
 
-    async def counting(client, leg):
+    async def counting(client, leg, mode="local"):
         calls.append(leg.number)
         return check.leg_answer(leg)
     monkeypatch.setattr(ask, "ask_leg", counting)
@@ -69,3 +75,28 @@ async def test_no_games_gives_a_friendly_error(monkeypatch):
     monkeypatch.setattr(fetch, "recent_games", none)
     assert await run("V75") == [
         {"type": "error", "code": "no_games", "message": "ATG has no finished V75 games right now."}]
+
+
+@pytest.mark.anyio
+async def test_local_mode_counts_with_code_and_claude_mode_asks_the_model(monkeypatch):
+    async def perfect(client, leg, mode="local"):
+        return check.leg_answer(leg)
+    monkeypatch.setattr(ask, "ask_leg", perfect)
+    summaries = []
+
+    async def summary(client, rows, mode="local"):
+        summaries.append(len(rows))
+        return {"wins": 6, "median": 2.0}  # one win short, on purpose
+    monkeypatch.setattr(ask, "ask_summary", summary)
+
+    async def claude_name(mode):
+        return "claude-test" if mode == "claude" else ask.MODEL
+    monkeypatch.setattr(ask, "model_name", claude_name)
+
+    local = (await run())[-1]
+    assert local["summed_up_by"] == "code" and local["llm"]["wins"] == 7 and summaries == []
+    claude = (await run(mode="claude"))[-1]
+    assert claude["summed_up_by"] == "model" and summaries == [16]
+    assert claude["llm"]["wins"] == 6 and claude["checks"] == {"wins": False, "median": True}
+    await run(mode="claude")
+    assert summaries == [16]  # the summary is saved too
