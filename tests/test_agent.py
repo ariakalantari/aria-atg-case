@@ -13,6 +13,10 @@ LEG_7_CALL = [  # a tool call arrives in pieces, like llama.cpp streams it
     {"tool_calls": [{"index": 0, "function": {"arguments": '"leg": 7, "track": "Boden"}'}}]},
 ]
 ANSWER = [{"content": "Shogun R.R. was the favourite "}, {"content": "but Frank S.H. won."}]
+FOLLOW_UPS = {"picks": ["Show all legs at Boden", "Show leg 8 at Boden"], "question": "Who won leg 5 at Boden?"}
+
+
+follow_up_requests = []
 
 
 def sse(deltas: list[dict]) -> str:
@@ -23,15 +27,21 @@ def sse(deltas: list[dict]) -> str:
 
 @pytest.fixture
 def fake_model(load, monkeypatch):
-    """Returns a function that sets the fake model's replies, one per request. Records the requests."""
+    """Returns a function that sets the fake model's replies, one per request. Records the requests.
+    The follow-up call (the one with a JSON schema) always gets FOLLOW_UPS and is recorded in follow_up_requests."""
     requests, replies = [], []
+    follow_up_requests.clear()
 
     async def fake_load(client, game_type):
         return [load(BODEN, True)]
     monkeypatch.setattr(tools, "load", fake_load)
 
     def handler(request: httpx.Request) -> httpx.Response:
-        requests.append(json.loads(request.content))
+        body = json.loads(request.content)
+        if "response_format" in body:
+            follow_up_requests.append(body)
+            return httpx.Response(200, json={"choices": [{"message": {"content": json.dumps(FOLLOW_UPS)}}]})
+        requests.append(body)
         return httpx.Response(200, text=sse(replies[min(len(requests), len(replies)) - 1]))
 
     real_client = httpx.AsyncClient
@@ -51,7 +61,7 @@ async def run(question: str) -> list[dict]:
 @pytest.mark.anyio
 async def test_tool_call_then_answer(fake_model):
     requests = fake_model(LEG_7_CALL, ANSWER)
-    tool, *tokens, done = await run("Show me leg 7 at Boden")
+    tool, *tokens, done, follow_ups = await run("Show me leg 7 at Boden")
 
     assert tool["type"] == "tool" and tool["label"] == "Looked up leg 7 at Boden"
     assert tool["view"]["title"] == "Leg 7, Boden"
@@ -72,7 +82,9 @@ async def test_tool_call_then_answer(fake_model):
 async def test_plain_chat_needs_no_tools(fake_model):
     fake_model([{"content": "Hi! I can tell you how the favourites did."}])
     events = await run("Hi!")
-    assert [e["type"] for e in events] == ["token", "done"]
+    assert [e["type"] for e in events] == ["token", "done", "followups"]
+    assert events[-1]["questions"] == ["Summarise V85", "Biggest upsets in V85", "Compare all game types"]
+    assert not follow_up_requests  # no race data looked up, so preset ideas and no extra model call
 
 
 @pytest.mark.anyio
@@ -83,6 +95,26 @@ async def test_the_page_is_described_next_to_the_question(fake_model):
     assert first[0]["role"] == "system"
     assert first[-1]["content"] == (
         "(The page shows V85. Its latest games: Boden on Saturday 3 October. Answer in English.)\n\nShow me leg 7 at Boden")
+
+
+@pytest.mark.anyio
+async def test_follow_ups_come_after_done(fake_model):
+    fake_model(LEG_7_CALL, ANSWER)
+    events = await run("Show me leg 7 at Boden")
+    assert [e["type"] for e in events][-2:] == ["done", "followups"]
+    assert events[-1]["questions"] == ["Show all legs at Boden", "Show leg 8 at Boden", "Who won leg 5 at Boden?"]
+
+    # The model only chooses among preset ideas built from the leg it just looked up
+    ideas = follow_up_requests[0]["response_format"]["json_schema"]["schema"]["properties"]["picks"]["items"]["enum"]
+    assert ideas[:3] == ["Show leg 8 at Boden", "Show all legs at Boden", "Biggest upsets in V85"]
+    assert "Shogun R.R. was the favourite but Frank S.H. won." in follow_up_requests[0]["messages"][0]["content"]
+
+
+@pytest.mark.anyio
+async def test_follow_ups_follow_the_question_language(fake_model):
+    fake_model([{"content": "Hej! Fråga mig om favoriterna."}])
+    events = [event async for event in agent.chat([{"role": "user", "content": "Hej!"}], "V85", "en")]
+    assert events[-1]["questions"][0] == "Sammanfatta V85"
 
 
 def test_answer_language_follows_the_question_then_the_page():
@@ -98,7 +130,7 @@ async def test_gives_up_politely_after_too_many_tool_rounds(fake_model):
     requests = fake_model(LEG_7_CALL)  # the model asks for tools every time
     events = await run("Show me leg 7 at Boden")
     assert len(requests) == agent.MAX_ROUNDS
-    assert events[-2]["text"].startswith("I could not finish that one.")
+    assert events[-3]["text"].startswith("I could not finish that one.")
 
 
 @pytest.mark.anyio

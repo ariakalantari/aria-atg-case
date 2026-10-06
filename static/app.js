@@ -30,22 +30,85 @@ function init() {
     const button = event.target.closest("button");
     if (button && button.dataset.lang !== lang) {
       setLanguage(button.dataset.lang);
-      load(state.type);
+      if (state) load(state.type); // during the first start there is no report yet
     }
   });
-  checkModel();
-  load("V85");
+  waitForModel();
 }
 
-// Only says something while the local model is still starting (the very first start downloads it)
-async function checkModel() {
+// ---------- first start ----------
+// The first start downloads Harry's model (about 1.3 GB). Until it is ready the setup screen shows
+// alone, with real progress, and the report waits instead of failing. Later starts skip all this.
+
+const download = { at: 0, done: 0, speed: 0, moved: 0 }; // last sample, for the speed and time left
+
+async function waitForModel() {
   let status = { llm: "offline", model: "" };
   try {
     status = await (await fetch("/api/status")).json();
   } catch {}
-  $("#model-notice").hidden = status.llm === "ready";
   if (status.model) $("#model-name").textContent = shortModel(status.model);
-  if (status.llm !== "ready") setTimeout(checkModel, 3000);
+  if (status.llm === "ready") return startPage();
+  showSetup(status);
+  setTimeout(waitForModel, 1000);
+}
+
+function showSetup(status) {
+  document.body.classList.add("setting-up");
+  $("#setup").hidden = false;
+  const got = status.download;
+  const downloading = status.llm === "offline" && (!got || got.done < got.total);
+  markSteps(downloading ? 0 : 1);
+  const share = got ? got.done / got.total : downloading ? 0 : 1;
+  $("#download-bar span").style.width = `${Math.round(share * 100)}%`;
+  $("#download-bar").setAttribute("aria-valuenow", Math.round(share * 100));
+  $("#download-text").textContent = downloading ? downloadText(got) : t("Saved on this computer");
+  $("#setup-source").textContent = t("From Hugging Face: {model}. The terminal shows the progress too.",
+    { model: status.model.replace(":", " (") + (status.model.includes(":") ? ")" : "") });
+}
+
+// "512 of 1,281 MB • 24 MB/s • about 1 min left"
+function downloadText(got) {
+  if (!got) return t("Downloading");
+  const now = Date.now();
+  if (download.at) {
+    const rate = Math.max(0, got.done - download.done) / ((now - download.at) / 1000);
+    download.speed = download.speed ? 0.7 * download.speed + 0.3 * rate : rate;
+  }
+  if (got.done > download.done || !download.moved) download.moved = now;
+  Object.assign(download, { at: now, done: got.done });
+
+  if (!got.done) return t("Starting the download");
+  const mb = (bytes) => (bytes / 1e6).toLocaleString(locale(), { maximumFractionDigits: bytes < 1e7 ? 1 : 0 });
+  const parts = [t("{done} of {total} MB", { done: mb(got.done), total: mb(got.total) })];
+  if (now - download.moved > 15000) {
+    parts.push(t("No progress for a while. Check the internet connection, it keeps trying by itself."));
+  } else if (download.speed > 0) {
+    const seconds = (got.total - got.done) / download.speed;
+    parts.push(`${mb(download.speed)} MB/s`,
+      seconds < 60 ? t("under a minute left") : t("about {n} min left", { n: Math.round(seconds / 60) }));
+  }
+  return parts.join(" • ");
+}
+
+// Steps before "active" get a check, the active one spins
+function markSteps(active) {
+  document.querySelectorAll(".setup-steps li").forEach((step, i) => {
+    step.className = i < active ? "done" : i === active ? "active" : "";
+    step.querySelector(".step-mark").innerHTML = i < active ? icon("check") : "";
+  });
+}
+
+async function startPage() {
+  if (document.body.classList.contains("setting-up")) {
+    markSteps(2); // downloaded and loaded; the report starts now
+    $("#download-text").textContent = t("Saved on this computer");
+    $("#download-bar span").style.width = "100%";
+    await new Promise((resolve) => setTimeout(resolve, 900)); // let the last check show
+    document.body.classList.remove("setting-up");
+    $("#setup").hidden = true;
+  }
+  load("V85");
 }
 
 // ---------- streaming ----------

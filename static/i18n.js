@@ -112,8 +112,6 @@ const SWEDISH = {
   // Harry AI
   "New chat": "Ny chatt",
   "Close Harry AI": "Stäng Harry AI",
-  "Harry is starting up. The very first start downloads the model (about 1.3 GB), so give it a few minutes.":
-    "Harry startar. Första gången laddas modellen ner (cirka 1,3 GB), så det kan ta några minuter.",
   "Write to Harry here": "Skriv till Harry här",
   "Your question": "Din fråga",
   "Send": "Skicka",
@@ -130,6 +128,25 @@ const SWEDISH = {
   "Reading your question": "Tolkar fråga", // ATG's own assistant says exactly this
   "Reading the results": "Läser resultaten",
   "Stopped": "Stoppad",
+
+  // first start (the model download)
+  "Getting Harry ready": "Harry gör sig redo",
+  "Harry is a small AI model that runs on this computer. The first start downloads it once (about 1.3 GB) and saves it, so after that it starts in seconds.":
+    "Harry är en liten AI-modell som körs på den här datorn. Första gången laddas den ner (cirka 1,3 GB) och sparas, så sedan startar den på några sekunder.",
+  "Download the model": "Ladda ner modellen",
+  "Load it into memory": "Läs in den i minnet",
+  "Takes a few seconds": "Tar några sekunder",
+  "Answer the latest games": "Svara på de senaste omgångarna",
+  "Starts by itself": "Startar av sig själv",
+  "Saved on this computer": "Sparad på den här datorn",
+  "From Hugging Face: {model}. The terminal shows the progress too.": "Från Hugging Face: {model}. Terminalen visar också hur det går.",
+  "Downloading": "Laddar ner",
+  "Starting the download": "Startar nedladdningen",
+  "{done} of {total} MB": "{done} av {total} MB",
+  "No progress for a while. Check the internet connection, it keeps trying by itself.":
+    "Inget har hänt på en stund. Kontrollera internetanslutningen, den försöker igen av sig själv.",
+  "under a minute left": "under en minut kvar",
+  "about {n} min left": "cirka {n} min kvar",
 
   // footer
   "The favourite is the horse with the lowest final V-odds. A disqualified favourite counts as finishing last. Foreign tracks only publish the top 3, so a finish outside it shows as \"outside top 3\".":

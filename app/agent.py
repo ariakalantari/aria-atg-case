@@ -12,12 +12,11 @@ The loop for one question:
 Nothing is stored on the server. The page sends the last few messages with every question.
 """
 import json
-import re
 
 import httpx
 
-from . import ask, tools
-from .words import say
+from . import ask, followups, tools
+from .words import answer_language, say
 
 MAX_ROUNDS = 4
 NUDGE = "If this answers the question, reply to the user now."  # added to tool results, small models need it
@@ -61,11 +60,13 @@ The page shows each tool result as a table, so do not repeat whole tables."""
 
 
 async def chat(messages: list[dict], game_type: str, lang: str = "en"):
-    """Answer the last message. Yields events: tool (with a table), token (text) and done.
+    """Answer the last message. Yields events: tool (with a table), token (text), done, then followups.
 
     The done event lists the tool calls of this turn with their facts. The page keeps them with
     the answer and sends them back with later questions, so follow-ups ("and in that leg?")
     are answered from real data instead of the model's memory.
+    The followups event (ideas for what to ask next) comes after done, so the page can
+    finish the answer straight away instead of waiting for the extra model call.
     """
     async with httpx.AsyncClient(timeout=30) as client:
         games = await tools.load(client, game_type)
@@ -74,7 +75,7 @@ async def chat(messages: list[dict], game_type: str, lang: str = "en"):
             *replay(messages[:-1]),
             with_page_note(messages[-1], game_type, games, lang),
         ]
-        used = []
+        answer, used, views = "", [], []
 
         for _ in range(MAX_ROUNDS):
             text, calls = "", {}
@@ -84,6 +85,7 @@ async def chat(messages: list[dict], game_type: str, lang: str = "en"):
                     yield {"type": "token", "text": value}
                 else:
                     add_tool_part(calls, value)
+            answer += text
             if not calls:
                 break
 
@@ -92,11 +94,18 @@ async def chat(messages: list[dict], game_type: str, lang: str = "en"):
             for call in calls:
                 facts, view, label = await tools.run(client, call["function"]["name"], arguments(call), game_type, lang)
                 used.append({"name": call["function"]["name"], "arguments": arguments(call), "facts": facts})
+                views.append(view)
                 yield {"type": "tool", "name": call["function"]["name"], "label": label, "view": view}
                 conversation.append({"role": "tool", "tool_call_id": call["id"], "content": "\n".join([*facts, NUDGE])})
         else:  # still asking for tools after the last round
-            yield {"type": "token", "text": say(lang, "I could not finish that one. Try asking about one game or one leg.")}
+            answer = say(lang, "I could not finish that one. Try asking about one game or one leg.")
+            yield {"type": "token", "text": answer}
         yield {"type": "done", "calls": used}
+
+        if answer.strip():  # ideas for what to ask next, in the same language as the answer
+            questions = await followups.suggest(client, messages, answer, list(zip(used, views)), game_type, games,
+                                                answer_language(messages[-1]["content"], lang))
+            yield {"type": "followups", "questions": questions}
 
 
 def replay(messages: list[dict]) -> list[dict]:
@@ -125,24 +134,6 @@ def with_page_note(message: dict, game_type: str, games: list, lang: str = "en")
         language = " Answer in English."
     note = f"(The page shows {game_type}. Its latest games: {latest}.{language})"
     return {"role": "user", "content": f"{note}\n\n{message['content']}"}
-
-
-SWEDISH_HINTS = {"och", "är", "vad", "vilken", "vilka", "hur", "jag", "på", "som", "inte", "med", "för", "kan", "visa",
-                 "var", "den", "det", "ett", "om", "har", "spela", "avdelning", "omgång", "favoriten", "hej", "tack"}
-ENGLISH_HINTS = {"the", "what", "which", "how", "is", "was", "show", "me", "did", "does", "of", "and", "a", "who",
-                 "why", "can", "you", "hi", "hello", "thanks", "biggest", "leg", "game", "favourite", "favorite"}
-
-
-def answer_language(question: str, page_lang: str) -> str:
-    """Answer in the language the question is written in. When that is unclear ("V85?"), use the
-    page's language. Plain code decides this, because a small model often gets it wrong."""
-    text = question.lower()
-    words = re.findall(r"[a-zåäö]+", text)
-    swedish = sum(word in SWEDISH_HINTS for word in words) + (2 if re.search("[åäö]", text) else 0)
-    english = sum(word in ENGLISH_HINTS for word in words)
-    if swedish != english:
-        return "sv" if swedish > english else "en"
-    return page_lang
 
 
 async def stream(client: httpx.AsyncClient, conversation: list[dict]):

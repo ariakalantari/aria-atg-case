@@ -13,7 +13,8 @@ cd aria-atg-case
 docker compose up
 ```
 
-Open http://localhost:8000. The first start downloads the model (1.3 GB). No GPU or API key needed.
+Open http://localhost:8000. The first start downloads Harry's model once (1.3 GB), and the page and the
+terminal show the progress. After that it starts in seconds. No GPU or API key needed.
 
 ## How it works
 

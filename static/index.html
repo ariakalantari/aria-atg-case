@@ -59,6 +59,22 @@
     </div>
   </header>
 
+  <!-- First start: Harry's model downloads once. Until it is ready, this screen shows alone. -->
+  <section class="setup" id="setup" hidden>
+    <div class="setup-card">
+      <span class="orb big" aria-hidden="true"></span>
+      <h1 data-i18n>Getting Harry ready</h1>
+      <p class="setup-lead" data-i18n>Harry is a small AI model that runs on this computer. The first start downloads it once (about 1.3 GB) and saves it, so after that it starts in seconds.</p>
+      <ol class="setup-steps">
+        <li><span class="step-mark"></span><div><strong data-i18n>Download the model</strong><span class="step-text" id="download-text"></span>
+          <div class="bar" id="download-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"><span></span></div></div></li>
+        <li><span class="step-mark"></span><div><strong data-i18n>Load it into memory</strong><span class="step-text" data-i18n>Takes a few seconds</span></div></li>
+        <li><span class="step-mark"></span><div><strong data-i18n>Answer the latest games</strong><span class="step-text" data-i18n>Starts by itself</span></div></li>
+      </ol>
+      <p class="setup-source" id="setup-source"></p>
+    </div>
+  </section>
+
   <div class="layout">
   <main class="page">
     <section class="card intro">
@@ -138,7 +154,6 @@
       <h2 class="harry-mark">Harry AI <span class="beta">Beta</span></h2>
       <button class="icon-button" id="chat-close" type="button" aria-label="Close Harry AI" data-i18n-label="Close Harry AI"><svg class="icon"><use href="#i-close"/></svg></button>
     </header>
-    <p class="model-notice" id="model-notice" data-i18n hidden>Harry is starting up. The very first start downloads the model (about 1.3 GB), so give it a few minutes.</p>
     <div class="messages" id="chat-messages" aria-live="polite"></div>
     <div class="suggestions" id="suggestions"></div>
     <form class="composer" id="chat-form">

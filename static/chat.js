@@ -1,11 +1,11 @@
 // The Harry AI sidebar, styled after ATG's own assistant panel. Harry chats freely and calls
 // tools when it needs race data. Nothing is saved anywhere: the page keeps this conversation
-// and sends the last few messages with each question. "Start over" clears it.
+// and sends the last few messages with each question. "New chat" clears it.
 // Uses helpers from app.js ($, esc, icon, readLines, state) and i18n.js (t, lang, odds).
 
 const HISTORY_SENT = 7; // the last few messages the model sees (odd, so it starts with a question)
 const FADE_MS = 600;    // how long a new word takes to fade in
-const chat = { history: [], busy: null }; // busy: AbortController of the question being answered
+const chat = { history: [], busy: null, tail: null }; // busy: the question being answered, tail: the last request (still sending follow-ups)
 const wide = window.matchMedia("(min-width: 1200px)");
 const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -38,6 +38,7 @@ function setChatOpen(open) {
 }
 
 function newChat() {
+  chat.tail?.abort(); // late follow-ups from the last answer must not land in the new chat
   chat.history = [];
   $("#chat-messages").innerHTML = heroHtml();
   $("#suggestions").innerHTML = suggestionsHtml();
@@ -61,7 +62,9 @@ function askAboutLeg(leg, track) {
 async function askAssistant(question, chip = null) {
   question = question.trim();
   if (!question || chat.busy) return;
+  chat.tail?.abort(); // stop waiting for the last answer's follow-ups
   const stop = new AbortController();
+  chat.tail = stop;
   setBusy(stop);
 
   // Ask right away. The answer streams in while the question animates into place.
@@ -78,26 +81,44 @@ async function askAssistant(question, chip = null) {
   const reply = addReply();
 
   let answer = "";
-  let calls = [];
+  // Runs once: at "done", or when the stream stops early. The follow-up ideas come after "done",
+  // so the input is free again while the model is still thinking of them.
+  const end = (calls = []) => {
+    if (chat.busy !== stop) return;
+    reply.finish(stop.signal.aborted);
+    if (answer) {
+      // Keep the tool calls and their results with the answer, so follow-ups use real data
+      chat.history.push({ role: "user", content: question }, { role: "assistant", content: answer.slice(0, 4000), calls });
+    }
+    setBusy(null);
+  };
   try {
     const response = await request;
     if (!response?.ok) throw new Error();
     for await (const event of readLines(response)) {
-      if (event.type === "token") answer += event.text;
-      if (event.type === "done") calls = event.calls;
-      reply.show(event);
+      if (event.type === "done") end(event.calls);
+      else if (event.type === "followups") showFollowUps(event.questions);
+      else if (chat.busy === stop) {
+        if (event.type === "token") answer += event.text;
+        reply.show(event);
+      }
     }
   } catch {
-    if (!stop.signal.aborted) {
+    if (chat.busy === stop && !stop.signal.aborted) {
       reply.show({ type: "error", message: t("Lost contact with the app. Check that it is still running.") });
     }
   }
-  reply.finish(stop.signal.aborted);
-  if (answer) {
-    // Keep the tool calls and their results with the answer, so follow-ups use real data
-    chat.history.push({ role: "user", content: question }, { role: "assistant", content: answer.slice(0, 4000), calls });
-  }
-  setBusy(null);
+  end();
+}
+
+// Ideas for what to ask next, in the docked row where the suggestions were. Asking anything folds them away.
+function showFollowUps(questions) {
+  const ideas = $("#suggestions");
+  if (chat.busy || !questions?.length) return;
+  ideas.innerHTML = chipsHtml(questions);
+  ideas.hidden = false;
+  if (!calm.matches) ideas.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 200, easing: "ease-out" });
+  scrollChat();
 }
 
 function setBusy(controller) {
@@ -273,23 +294,30 @@ function suggestionsHtml() {
     t("Is the favourite a good bet?"),
     t("What does V-odds mean?"),
   ].filter(Boolean);
+  return chipsHtml(ideas);
+}
+
+function chipsHtml(ideas) {
   return ideas.map((idea) => `<button type="button" class="suggestion">${esc(idea)}</button>`).join("");
 }
 
-// A tool result as an ATG style card: game tag, number badges, leg flags
+// A tool result as an ATG style card: game tag, number badges, leg flags.
+// --i numbers the parts top to bottom, so they fade in one after another (style.css).
 function viewHtml(view) {
+  const first = view.tiles ? 2 : 1; // the row after the caption (and tiles)
+  const order = (i) => `style="--i:${Math.min(i, 12)}"`;
   const tiles = view.tiles
-    ? `<div class="mini-tiles">${view.tiles.map((t) => `<div><span>${esc(t.label)}</span><strong>${esc(t.value)}</strong></div>`).join("")}</div>`
+    ? `<div class="mini-tiles" ${order(1)}>${view.tiles.map((t) => `<div><span>${esc(t.label)}</span><strong>${esc(t.value)}</strong></div>`).join("")}</div>`
     : "";
   const head = view.columns.map((c) => `<th class="${c.type}">${esc(c.label)}</th>`).join("");
-  const rows = view.rows.map((row) =>
-    `<tr>${view.columns.map((c) => `<td class="${c.type}">${cellHtml(c.type, row[c.key])}</td>`).join("")}</tr>`).join("");
+  const rows = view.rows.map((row, i) =>
+    `<tr ${order(first + 1 + i)}>${view.columns.map((c) => `<td class="${c.type}">${cellHtml(c.type, row[c.key])}</td>`).join("")}</tr>`).join("");
   const tag = view.game_type ? `<span class="game-tag">${esc(view.game_type)}</span>` : "";
   return `
     <figure class="data-card" ${view.game_type ? `data-game="${esc(view.game_type)}"` : ""}>
       <figcaption>${tag}${esc(view.title)}</figcaption>
       ${tiles}
-      <div class="table-scroll"><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="table-scroll"><table><thead><tr ${order(first)}>${head}</tr></thead><tbody>${rows}</tbody></table></div>
     </figure>`;
 }
 
@@ -301,7 +329,7 @@ function cellHtml(type, value) {
   if (type === "percent") return `${Math.round(value * 100)}<small>%</small>`;
   if (type === "game") return `<span class="game-tag" data-game="${esc(value)}">${esc(value)}</span>`;
   if (type === "finish") {
-    if (value === "1") return `<span class="won-flag">Won</span>`;
+    if (value === "1") return `<span class="won-flag">${t("Won")}</span>`;
     return `<span class="${value === "disqualified" ? "dq" : ""}">${columnLabel(value)}</span>`;
   }
   return esc(value);

@@ -1,6 +1,8 @@
 """The web app: one page plus a small streaming API."""
+import asyncio
 import json
 import logging
+from contextlib import asynccontextmanager
 from pathlib import Path as FilePath
 from typing import Annotated, Literal
 
@@ -10,11 +12,21 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import agent, ask
+from . import agent, ask, download
 from .report import report
 
 log = logging.getLogger(__name__)
-app = FastAPI(title="Aria ATG Case")
+terminal = logging.getLogger("uvicorn.error")  # uvicorn's own logger, so these lines show in the terminal
+
+
+@asynccontextmanager
+async def lifespan(_app):
+    task = asyncio.create_task(announce())
+    yield
+    task.cancel()
+
+
+app = FastAPI(title="Aria ATG Case", lifespan=lifespan)
 GAME_TYPE = r"^[A-Za-z0-9]{1,8}$"
 
 
@@ -52,8 +64,37 @@ async def post_chat(chat: Chat):
 
 @app.get("/api/status")
 async def get_status():
+    """Is Harry's model ready? While it is still downloading, also how far it has come."""
     async with httpx.AsyncClient() as client:
-        return {"llm": await ask.status(client), "model": ask.MODEL}
+        return await model_status(client)
+
+
+async def model_status(client: httpx.AsyncClient) -> dict:
+    state = await ask.status(client)
+    result = {"llm": state, "model": ask.MODEL}
+    if state == "offline":  # llama.cpp only starts listening once the model is downloaded
+        result["download"] = await download.progress(client)
+    return result
+
+
+async def announce():
+    """Say in the terminal where to open the page, and how the first-start download is going.
+    llama.cpp prints nothing while it downloads, so without this the terminal looks stuck."""
+    terminal.info("Aria ATG Case is running. Open http://localhost:8000")
+    said = ""
+    async with httpx.AsyncClient() as client:
+        while (status := await model_status(client))["llm"] != "ready":
+            line = "Starting Harry's model..."
+            if (got := status.get("download")) and got["done"] < got["total"]:
+                line = (f"Downloading Harry's model, only on the first start: {got['done'] * 100 // got['total'] // 10 * 10}%"
+                        f" of {got['total'] / 1e9:.1f} GB. The page shows the progress too.")
+            elif got or status["llm"] == "loading":
+                line = "Loading Harry's model into memory..."
+            if line != said:
+                terminal.info(line)
+                said = line
+            await asyncio.sleep(2)
+    terminal.info("Harry is ready.")
 
 
 def stream_lines(events, what: str) -> StreamingResponse:
