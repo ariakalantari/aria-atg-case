@@ -6,9 +6,10 @@ How good are ATG's customers at picking the winning horse?
 
 On 6 October 2026, over the three latest finished games of all 10 game types (128 different races), the
 customers' favourite (the horse with the lowest V-odds, the one most backed) won **36%** of the races. Its odds
-gave it 38% on average, so the favourites won a little less often than their odds said. Half of them finished
-2nd or better. In V85 alone the favourite won 10 of 24 legs (42%), more than the odds' 35%. Three games per
-game type is a small sample, so these numbers move as new games finish.
+gave it 38% on average, so the favourites won about as often as their odds said: with this few races, the gap
+is well within chance. Half of them finished 2nd or better. In V85 alone the favourite won 10 of 24 legs (42%)
+against the odds' 35%, also within chance. Three games per game type is a small sample, so these numbers move
+as new games finish.
 
 ## Run
 
